@@ -448,9 +448,9 @@ namespace ThoNohT.NohBoard.Forms
             this.ApplyLayeredOverlayPointerStyles(this._overlayLocked);
         }
 
-        internal void InvalidateKeyboardSurface()
+        internal void InvalidateKeyboardSurface(bool immediate = false)
         {
-            if (this.ShouldDeferTimerDrivenRepaint())
+            if (!immediate && this.ShouldDeferTimerDrivenRepaint())
                 return;
 
             if (this.UsesLayeredOverlay())
@@ -621,6 +621,8 @@ namespace ThoNohT.NohBoard.Forms
                 return false;
 
             var definition = GlobalSettings.CurrentDefinition;
+            this.SyncLayeredOverlayBounds();
+
             var scaledSize = this.GetScaledKeyboardSize(definition);
             var w = scaledSize.Width;
             var h = scaledSize.Height;
@@ -675,20 +677,25 @@ namespace ThoNohT.NohBoard.Forms
             if (this.UsesLayeredOverlay())
                 return;
 
+            var surface = this._keyboardSurface;
+            if (surface == null)
+                return;
+
             if (GlobalSettings.CurrentDefinition == null || GlobalSettings.CurrentStyle == null)
             {
                 e.Graphics.Clear(Color.Black);
                 return;
             }
 
-            if (!this.backBrushes.Any())
+            var transparency = GlobalSettings.Settings?.OverlayTransparencyPercent ?? 0;
+            using (var clearBrush = new SolidBrush(
+                OverlayTransparency.Apply(GlobalSettings.CurrentStyle.BackgroundColor, transparency)))
             {
-                e.Graphics.Clear(
-                    OverlayTransparency.Apply(
-                        GlobalSettings.CurrentStyle.BackgroundColor,
-                        GlobalSettings.Settings?.OverlayTransparencyPercent ?? 0));
-                return;
+                e.Graphics.FillRectangle(clearBrush, surface.ClientRectangle);
             }
+
+            if (!this.backBrushes.Any())
+                return;
 
             var scale = this.GetKeyboardScaleFactor();
             if (Math.Abs(scale - 1f) >= 0.001f)

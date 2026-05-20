@@ -55,6 +55,11 @@ namespace ThoNohT.NohBoard.Forms
         /// </summary>
         private bool loaded = false;
 
+        /// <summary>
+        /// While repopulating the style list, skip <see cref="StyleList_SelectedIndexChanged"/> (preview runs from the definition handler).
+        /// </summary>
+        private bool styleListProgrammaticChange;
+
         /// <summary>Avoid re-entrancy when column widths trigger layout.</summary>
         private bool fontsGridApplyingColumnWidths;
 
@@ -278,7 +283,9 @@ namespace ThoNohT.NohBoard.Forms
                 if (GlobalSettings.Settings.LoadedKeyboard != null)
                     this.DefinitionsList.SelectedItem = GlobalSettings.Settings.LoadedKeyboard;
             }
+
             this.loaded = true;
+            this.ApplyPreviewSelection();
         }
 
         /// <summary>
@@ -287,6 +294,9 @@ namespace ThoNohT.NohBoard.Forms
         private void CategoryCombo_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             this.PopulateKeyboards();
+
+            if (this.loaded)
+                this.ApplyPreviewSelection();
         }
 
         /// <summary>
@@ -335,26 +345,11 @@ namespace ThoNohT.NohBoard.Forms
             try
             {
                 this.LoadStyles();
-
-                var kbDef = KeyboardDefinition.Load(
-                    this.SelectedCategory,
-                    this.SelectedDefinition,
-                    this.SelectedStyle?.Name);
-                if (this.StyleList.Items.Count == 0) this.DefinitionChanged?.Invoke(kbDef, null, false);
-            } catch (Exception ex)
+                this.ApplyPreviewSelection();
+            }
+            catch (Exception ex)
             {
-                var L = UiTranslate.Lang;
-                MessageBox.Show(
-                    string.Format(
-                        UiTranslate.T(
-                            L,
-                            "Failed to load keyboard {0}: {1}",
-                            "載入鍵盤 {0} 失敗：{1}",
-                            "加载键盘 {0} 失败：{1}",
-                            "キーボード {0} の読み込みに失敗しました：{1}"),
-                        this.SelectedDefinition,
-                        ex.Message));
-                return;
+                this.ShowPreviewLoadError(ex, this.SelectedDefinition);
             }
         }
 
@@ -363,31 +358,61 @@ namespace ThoNohT.NohBoard.Forms
         /// </summary>
         private void StyleList_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            if (this.styleListProgrammaticChange)
+                return;
+
             try
             {
-                this.DefinitionChanged?.Invoke(
-                    KeyboardDefinition.Load(
-                        this.SelectedCategory,
-                        this.SelectedDefinition,
-                        this.SelectedStyle.Name),
-                    KeyboardStyle.Load(this.SelectedStyle.Name, this.SelectedStyle.Global),
-                    this.SelectedStyle.Global);
+                this.ApplyPreviewSelection();
             }
             catch (Exception ex)
             {
-                var L = UiTranslate.Lang;
-                MessageBox.Show(
-                    string.Format(
-                        UiTranslate.T(
-                            L,
-                            "Failed to load keyboard {0}: {1}",
-                            "載入鍵盤 {0} 失敗：{1}",
-                            "加载键盘 {0} 失败：{1}",
-                            "キーボード {0} の読み込みに失敗しました：{1}"),
-                        this.SelectedDefinition,
-                        ex.Message));
+                this.ShowPreviewLoadError(ex, this.SelectedStyle?.Name ?? this.SelectedDefinition);
+            }
+        }
+
+        /// <summary>
+        /// Pushes the current category/definition/style selection to the main form preview.
+        /// </summary>
+        private void ApplyPreviewSelection()
+        {
+            if (!this.loaded || this.SelectedDefinition == null)
+                return;
+
+            if (this.StyleList.Items.Count == 0)
+            {
+                this.DefinitionChanged?.Invoke(
+                    KeyboardDefinition.Load(this.SelectedCategory, this.SelectedDefinition, null),
+                    null,
+                    false);
                 return;
             }
+
+            if (this.SelectedStyle == null)
+                return;
+
+            this.DefinitionChanged?.Invoke(
+                KeyboardDefinition.Load(
+                    this.SelectedCategory,
+                    this.SelectedDefinition,
+                    this.SelectedStyle.Name),
+                KeyboardStyle.Load(this.SelectedStyle.Name, this.SelectedStyle.Global),
+                this.SelectedStyle.Global);
+        }
+
+        private void ShowPreviewLoadError(Exception ex, string itemName)
+        {
+            var L = UiTranslate.Lang;
+            MessageBox.Show(
+                string.Format(
+                    UiTranslate.T(
+                        L,
+                        "Failed to load keyboard {0}: {1}",
+                        "載入鍵盤 {0} 失敗：{1}",
+                        "加载键盘 {0} 失败：{1}",
+                        "キーボード {0} の読み込みに失敗しました：{1}"),
+                    itemName,
+                    ex.Message));
         }
 
         /// <summary>
@@ -483,20 +508,31 @@ namespace ThoNohT.NohBoard.Forms
                     })
                 .ToList();
 
-            this.StyleList.Items.Clear();
-            this.StyleList.Items.AddRange(this.globalStyles.Cast<object>().ToArray());
-            this.StyleList.Items.AddRange(specificStyles.Cast<object>().ToArray());
-
-            // Try to retain the style.
-            var loadedStyle = GlobalSettings.Settings.LoadedStyle;
-            if (this.StyleList.Items.Count > 0) this.StyleList.SelectedIndex = 0;
-            if (loadedStyle != null)
+            this.styleListProgrammaticChange = true;
+            try
             {
-                var styleIndex = this.FindStyleListIndex(loadedStyle);
-                if (styleIndex != -1)
+                this.StyleList.Items.Clear();
+                this.StyleList.Items.AddRange(this.globalStyles.Cast<object>().ToArray());
+                this.StyleList.Items.AddRange(specificStyles.Cast<object>().ToArray());
+
+                if (this.StyleList.Items.Count == 0)
+                    return;
+
+                this.StyleList.SelectedIndex = 0;
+
+                var loadedStyle = GlobalSettings.Settings.LoadedStyle;
+                if (loadedStyle != null
+                    && GlobalSettings.Settings.LoadedCategory == this.SelectedCategory
+                    && GlobalSettings.Settings.LoadedKeyboard == this.SelectedDefinition)
                 {
-                    this.StyleList.SelectedIndex = styleIndex;
+                    var styleIndex = this.FindStyleListIndex(loadedStyle);
+                    if (styleIndex != -1)
+                        this.StyleList.SelectedIndex = styleIndex;
                 }
+            }
+            finally
+            {
+                this.styleListProgrammaticChange = false;
             }
         }
 

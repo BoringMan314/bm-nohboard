@@ -239,9 +239,34 @@ namespace ThoNohT.NohBoard.Forms
             this.selectedDefinition = null;
 
             this.ResetBackBrushes();
-            this.ApplyOverlayTransparencyStyle();
+            this.RefreshKeyboardDisplayAfterDefinitionChange();
 
             return missingFonts;
+        }
+
+        /// <summary>
+        /// Resizes the keyboard surface and forces a full repaint after the loaded definition or style changed.
+        /// </summary>
+        private void RefreshKeyboardDisplayAfterDefinitionChange()
+        {
+            if (this.UsesLayeredOverlay())
+            {
+                this._layeredBitmap?.Dispose();
+                this._layeredBitmap = null;
+            }
+
+            this.ApplyKeyboardWindowLayout();
+
+            if (this.UsesLayeredOverlay())
+            {
+                this.EnsureLayeredOverlayForm();
+                this.SyncLayeredOverlayBounds();
+                this.PresentLayeredOverlay();
+            }
+            else
+                this._keyboardSurface?.Invalidate();
+
+            this.ApplyOverlayTransparencyStyle();
         }
 
         /// <summary>
@@ -281,6 +306,7 @@ namespace ThoNohT.NohBoard.Forms
         private void ResetBackBrushes()
         {
             GlobalSettings.StyleDependencyCounter++;
+            ImageCache.Clear();
 
             var hideFrameAndFill = OverlayTransparency.HidesFrameAndFill(
                 GlobalSettings.Settings?.OverlayTransparencyPercent ?? 0);
@@ -296,7 +322,7 @@ namespace ThoNohT.NohBoard.Forms
 
             if (hideFrameAndFill)
             {
-                this.InvalidateKeyboardSurface();
+                this.InvalidateKeyboardSurface(immediate: true);
                 return;
             }
 
@@ -353,7 +379,7 @@ namespace ThoNohT.NohBoard.Forms
                 }
             }
 
-            this.InvalidateKeyboardSurface();
+            this.InvalidateKeyboardSurface(immediate: true);
         }
 
         /// <summary>
