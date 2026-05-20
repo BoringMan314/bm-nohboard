@@ -56,6 +56,16 @@ namespace ThoNohT.NohBoard.Forms
 
         internal bool OverlayLocked => this._overlayLocked;
 
+        /// <summary>
+        /// Locked overlay hides main-form caption as a 1×1 shell; avoid restoring chrome during layout refreshes.
+        /// </summary>
+        private bool ShouldPreserveLockedCaptionShell()
+        {
+            return this._overlayLocked
+                && this._captionHiddenForOverlayLock
+                && this.UsesLayeredOverlay();
+        }
+
         private void InitializeOverlayLock()
         {
             this.HandleCreated += (_, _) =>
@@ -194,10 +204,9 @@ namespace ThoNohT.NohBoard.Forms
                 return;
 
             if (this._captionHiddenForOverlayLock)
-                this.RestoreCaptionChromeAfterOverlayLock();
+                return;
 
             this.ShrinkMainFormToCaptionOnly(keyboardWidth);
-            this._captionHiddenForOverlayLock = false;
             this.HideCaptionChromeForLockedLayeredOverlay();
         }
 

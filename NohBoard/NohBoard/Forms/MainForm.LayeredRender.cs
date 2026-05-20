@@ -97,10 +97,13 @@ namespace ThoNohT.NohBoard.Forms
             if (!this.IsHandleCreated || GlobalSettings.Settings == null)
                 return;
 
+            var preserveLockedShell = this.ShouldPreserveLockedCaptionShell();
+
             if (!this.UsesLayeredOverlay() && this._captionHiddenForOverlayLock)
                 this.RestoreCaptionChromeAfterOverlayLock();
 
-            this.ClearMainFormLayeredStyles();
+            if (!preserveLockedShell)
+                this.ClearMainFormLayeredStyles();
 
             if (this._keyboardSurface != null && this._keyboardSurface.IsHandleCreated)
             {
@@ -111,23 +114,18 @@ namespace ThoNohT.NohBoard.Forms
 
             if (this.UsesLayeredOverlay())
             {
-                this.ApplyKeyboardWindowLayout();
-                this.EnsureLayeredOverlayForm();
-                this._layeredOverlay.Enabled = true;
-                this._layeredOverlay.Show();
-                this.SyncLayeredOverlayBounds();
-                this.PresentLayeredOverlay();
+                if (preserveLockedShell)
+                    this.DetachKeyboardSurfaceFromMainForm();
+                else
+                    this.ApplyKeyboardWindowLayout();
 
-                this.BringLayeredOverlayToFront();
+                this.RefreshLayeredOverlayPresentation();
 
                 if (this._layeredOverlayModalMode
                     && this._activeAppModalDialog != null
                     && !this._activeAppModalDialog.IsDisposed
                     && this._activeAppModalDialog.IsHandleCreated)
                     this.PlaceDialogAboveLayeredOverlay(this._activeAppModalDialog);
-
-                this.WireLayeredOverlayContextMenu();
-                this.ApplyLayeredOverlayInteractionStyles();
             }
             else
             {
@@ -140,6 +138,21 @@ namespace ThoNohT.NohBoard.Forms
                 this.ApplyOverlayLockStyles();
 
             this.ApplyTaskSwitcherIconicPreviewPreference();
+        }
+
+        private void RefreshLayeredOverlayPresentation()
+        {
+            if (!this.UsesLayeredOverlay())
+                return;
+
+            this.EnsureLayeredOverlayForm();
+            this._layeredOverlay.Enabled = true;
+            this._layeredOverlay.Show();
+            this.SyncLayeredOverlayBounds();
+            this.PresentLayeredOverlay();
+            this.BringLayeredOverlayToFront();
+            this.WireLayeredOverlayContextMenu();
+            this.ApplyLayeredOverlayInteractionStyles();
         }
 
         private void ApplyKeyboardWindowLayout()
@@ -240,13 +253,14 @@ namespace ThoNohT.NohBoard.Forms
                 return;
 
             this._layeredOverlayModalMode = true;
-            this.ApplyKeyboardWindowLayout();
-            this.EnsureLayeredOverlayForm();
-            this._layeredOverlay.Enabled = true;
-            this._layeredOverlay.Show();
-            this.SyncLayeredOverlayBounds();
-            this.PresentLayeredOverlay();
-            this.BringLayeredOverlayToFront();
+
+            if (this.ShouldPreserveLockedCaptionShell())
+                this.RefreshLayeredOverlayPresentation();
+            else
+            {
+                this.ApplyKeyboardWindowLayout();
+                this.RefreshLayeredOverlayPresentation();
+            }
         }
 
         internal DialogResult ShowAppModalDialog(Form dialog)
@@ -375,7 +389,17 @@ namespace ThoNohT.NohBoard.Forms
                 return;
 
             if (this.UsesLayeredOverlay())
-                this.ApplyOverlayTransparencyStyle();
+            {
+                if (this.ShouldPreserveLockedCaptionShell())
+                {
+                    this.RefreshLayeredOverlayPresentation();
+                    this.ApplyOverlayLockStyles();
+                }
+                else
+                {
+                    this.ApplyOverlayTransparencyStyle();
+                }
+            }
 
             this.RestoreOverlayInteractionAfterModal();
 
