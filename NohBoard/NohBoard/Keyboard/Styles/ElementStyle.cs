@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -19,25 +19,13 @@ namespace ThoNohT.NohBoard.Keyboard.Styles
 {
     using System.Runtime.Serialization;
 
-    /// <summary>
-    /// Represents the style of any element that can be placed on a keyboard.
-    /// </summary>
     [KnownType(typeof(KeyStyle))]
     [KnownType(typeof(MouseSpeedIndicatorStyle))]
     [DataContract(Name = "ElementStyle", Namespace = "")]
     public abstract class ElementStyle
     {
-        /// <summary>
-        /// Returns a clone of this element style.
-        /// </summary>
-        /// <returns>The cloned element style.</returns>
         public abstract ElementStyle Clone();
 
-        /// <summary>
-        /// Checks whether the style has changes relative to the specified other style.
-        /// </summary>
-        /// <param name="other">The style to compare against.</param>
-        /// <returns>True if the style has changes, false otherwise.</returns>
         public abstract bool IsChanged(ElementStyle other);
     }
 }

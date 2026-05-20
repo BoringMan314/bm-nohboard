@@ -4,15 +4,8 @@ namespace ThoNohT.NohBoard.Controls
 
     partial class MouseSpeedStylePanel
     {
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (this.components != null))
@@ -24,10 +17,6 @@ namespace ThoNohT.NohBoard.Controls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             clrOuter = new ColorChooser();
@@ -39,9 +28,6 @@ namespace ThoNohT.NohBoard.Controls
             grpOutline.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)udOutlineWidth).BeginInit();
             SuspendLayout();
-            // 
-            // clrOuter
-            // 
             clrOuter.BackColor = SystemColors.Control;
             clrOuter.Color = Color.Black;
             clrOuter.LabelText = "Color 2 (high speed)";
@@ -52,9 +38,6 @@ namespace ThoNohT.NohBoard.Controls
             clrOuter.Size = new Size(185, 23);
             clrOuter.TabIndex = 0;
             clrOuter.ColorChanged += clr_ColorChanged;
-            // 
-            // grpOutline
-            // 
             grpOutline.Controls.Add(clrOuter);
             grpOutline.Controls.Add(lblOutlineWidth);
             grpOutline.Controls.Add(udOutlineWidth);
@@ -68,9 +51,6 @@ namespace ThoNohT.NohBoard.Controls
             grpOutline.TabStop = false;
             grpOutline.Text = "General";
             grpOutline.Enter += grpOutline_Enter;
-            // 
-            // lblOutlineWidth
-            // 
             lblOutlineWidth.Location = new Point(70, 85);
             lblOutlineWidth.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblOutlineWidth.Name = "lblOutlineWidth";
@@ -78,9 +58,6 @@ namespace ThoNohT.NohBoard.Controls
             lblOutlineWidth.TabIndex = 3;
             lblOutlineWidth.Text = "Outline Width";
             lblOutlineWidth.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // udOutlineWidth
-            // 
             udOutlineWidth.Location = new Point(10, 85);
             udOutlineWidth.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             udOutlineWidth.Name = "udOutlineWidth";
@@ -88,9 +65,6 @@ namespace ThoNohT.NohBoard.Controls
             udOutlineWidth.TabIndex = 2;
             udOutlineWidth.Value = new decimal(new int[] { 1, 0, 0, 0 });
             udOutlineWidth.ValueChanged += udOutlineWidth_ValueChanged;
-            // 
-            // clrInner
-            // 
             clrInner.BackColor = SystemColors.Control;
             clrInner.Color = Color.Black;
             clrInner.LabelText = "Color 1 (low speed)";
@@ -101,9 +75,6 @@ namespace ThoNohT.NohBoard.Controls
             clrInner.Size = new Size(185, 23);
             clrInner.TabIndex = 0;
             clrInner.ColorChanged += clr_ColorChanged;
-            // 
-            // lblTitle
-            // 
             lblTitle.AutoEllipsis = true;
             lblTitle.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTitle.Location = new Point(0, 0);
@@ -113,9 +84,6 @@ namespace ThoNohT.NohBoard.Controls
             lblTitle.TabIndex = 0;
             lblTitle.Text = "MouseSpeedIndicator";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // MouseSpeedStylePanel
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             Controls.Add(lblTitle);

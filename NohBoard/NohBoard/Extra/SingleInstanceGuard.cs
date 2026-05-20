@@ -26,13 +26,13 @@ namespace ThoNohT.NohBoard.Extra
 
     internal static class SingleInstanceGuard
     {
-        internal const string AppId = "bm-nohboard";
+        internal static string AppId => Constants.AppId;
 
-        internal const string MutexName = @"Global\bm-nohboard";
+        private static string MutexName => $@"Global\{Constants.AppId}";
 
-        private const string PipeFullPath = @"\\.\pipe\bm-nohboard";
+        private static string PipeFullPath => $@"\\.\pipe\{Constants.AppId}";
 
-        private const string MmfName = "bm-nohboard-pid";
+        private static string MmfName => $"{Constants.AppId}-pid";
 
         private const byte PipeSignalByte = 0x7E;
 
@@ -121,7 +121,7 @@ namespace ThoNohT.NohBoard.Extra
             var thread = new Thread(() => PipeServerWorker(onQuitRequested))
             {
                 IsBackground = true,
-                Name = "bm-nohboard-pipe",
+                Name = $"{Constants.AppId}-pipe",
             };
             thread.Start();
         }
@@ -251,7 +251,7 @@ namespace ThoNohT.NohBoard.Extra
         private static int CountOtherInstances(Process current)
         {
             var count = 0;
-            foreach (var p in Process.GetProcessesByName("NohBoard"))
+            foreach (var p in Process.GetProcessesByName(Constants.ProcessName))
             {
                 try
                 {
@@ -311,7 +311,7 @@ namespace ThoNohT.NohBoard.Extra
             {
                 using (var current = Process.GetCurrentProcess())
                 {
-                    foreach (var p in Process.GetProcessesByName("NohBoard"))
+                    foreach (var p in Process.GetProcessesByName(Constants.ProcessName))
                     {
                         try
                         {
@@ -351,14 +351,16 @@ namespace ThoNohT.NohBoard.Extra
             try
             {
                 var path = p.MainModule?.FileName ?? string.Empty;
-                if (path.IndexOf("nohboard", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (path.IndexOf(Constants.AppId, StringComparison.OrdinalIgnoreCase) >= 0)
                     return true;
             }
             catch
             {
             }
 
-            return (p.ProcessName ?? string.Empty).Equals("NohBoard", StringComparison.OrdinalIgnoreCase);
+            return (p.ProcessName ?? string.Empty).Equals(
+                Constants.ProcessName,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -23,26 +23,16 @@ namespace ThoNohT.NohBoard.Controls
     using System.Windows.Forms;
     using Extra;
 
-    /// <summary>
-    /// A text box that allows the user to type vectors.
-    /// </summary>
     public class VectorTextBox : TextBox
     {
         #region Events
 
-        /// <summary>
-        /// The event that is invoked when the value has been changed. Only invoked when the font is changed through
-        /// the user interface, not when it is changed programmatically.
-        /// </summary>
         public event Action<VectorTextBox, TPoint> ValueChanged;
 
         #endregion Events
 
         #region Fields
 
-        /// <summary>
-        /// Private fields for the properties.
-        /// </summary>
         private int maxVal = int.MaxValue;
         private int x;
         private int y;
@@ -53,9 +43,6 @@ namespace ThoNohT.NohBoard.Controls
 
         #region Properties
 
-        /// <summary>
-        /// The separator character.
-        /// </summary>
         public char Separator
         {
             get { return this.separator; }
@@ -66,9 +53,6 @@ namespace ThoNohT.NohBoard.Controls
             }
         }
 
-        /// <summary>
-        /// Whether there should be a space around the separator character.
-        /// </summary>
         public bool SpacesAroundSeparator
         {
             get { return this.spacesAroundSeparator; }
@@ -79,9 +63,6 @@ namespace ThoNohT.NohBoard.Controls
             }
         }
 
-        /// <summary>
-        /// The X value of the vector.
-        /// </summary>
         public int X
         {
             get { return this.x; }
@@ -92,9 +73,6 @@ namespace ThoNohT.NohBoard.Controls
             }
         }
 
-        /// <summary>
-        /// The Y value of the vector.
-        /// </summary>
         public int Y
         {
             get { return this.y; }
@@ -105,9 +83,6 @@ namespace ThoNohT.NohBoard.Controls
             }
         }
 
-        /// <summary>
-        /// The maximum values for the X and Y components.
-        /// </summary>
         public int MaxVal
         {
             get { return this.maxVal; }
@@ -119,18 +94,12 @@ namespace ThoNohT.NohBoard.Controls
             }
         }
 
-        /// <summary>
-        /// A formatted separator.
-        /// </summary>
         private string sep => this.SpacesAroundSeparator ? $" {this.Separator} " : this.Separator.ToString();
 
         #endregion Properties
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VectorTextBox" /> class.
-        /// </summary>
         public VectorTextBox()
         {
             this.TextAlign = HorizontalAlignment.Left;
@@ -139,7 +108,6 @@ namespace ThoNohT.NohBoard.Controls
             this.GotFocus += this.HandleFocus;
         }
 
-        /// <inheritdoc />
         protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
         {
             base.SetBoundsCore(x, y, width, FixedHeightTextBox.FixedUiHeight, specified | BoundsSpecified.Height);
@@ -149,10 +117,6 @@ namespace ThoNohT.NohBoard.Controls
 
         #region Methods
 
-        /// <summary>
-        /// When receiving focus. Make sure any 0 in front of which the current selection lies, is highlighted so we
-        /// don't need to worry about typing numbers in front of a 0.
-        /// </summary>
         private void HandleFocus(object sender, EventArgs e)
         {
             if (this.SelectionLength > 0) return;
@@ -169,21 +133,17 @@ namespace ThoNohT.NohBoard.Controls
                 this.SelectionLength = 1;
         }
 
-        /// <summary>
-        /// Handles the key pressed event. Allows only valid values to be typed.
-        /// </summary>
         private void HandleKeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = true;
             var key = e.KeyCode;
-            if (key == Keys.Oem1) key = (Keys)';'; // Apparently pressing the semicolon results in a special keycode.
+            if (key == Keys.Oem1) key = (Keys)';';
             var newChar = (char)key;
             var cursor = this.SelectionStart;
             var cursorLength = this.SelectionLength;
             var oldText = this.Text;
             var split = this.Text.Split(new[] { this.Separator, ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Ignore all whitelisted keys.
             var whitelistedKeys = new[] { Keys.Right, Keys.Left, Keys.Home, Keys.End };
             if (whitelistedKeys.Contains(key))
             {
@@ -193,12 +153,10 @@ namespace ThoNohT.NohBoard.Controls
 
             if (key == Keys.Back)
             {
-                // Backspace
                 if (cursorLength == 0 && cursor == 0) return;
                 var toDelete = cursorLength > 0
                     ? oldText.Substring(cursor, cursorLength) : oldText.Substring(cursor - 1, 1);
 
-                // Don't try to delete a separator.
                 var newMid = toDelete.Contains(this.separator.ToString()) ? this.sep : string.Empty;
 
                 var newLeft = cursorLength > 0 || cursor == 0
@@ -214,12 +172,10 @@ namespace ThoNohT.NohBoard.Controls
             }
             else if (key == Keys.Delete)
             {
-                // Delete
                 if (cursor == oldText.Length) return;
                 var toDelete = cursorLength > 0
                     ? oldText.Substring(cursor, cursorLength) : oldText.Substring(cursor, 1);
 
-                // Don't try to delete a separator.
                 var newMid = toDelete.Contains(this.separator.ToString()) ? this.sep : string.Empty;
 
                 var newLeft = oldText.Substring(0, cursor);
@@ -234,14 +190,12 @@ namespace ThoNohT.NohBoard.Controls
             }
             else if (newChar.ToString().Equals(this.Separator.ToString(), StringComparison.InvariantCultureIgnoreCase))
             {
-                // Separator
                 if (!oldText.Contains(this.Separator.ToString()))
                 {
                     this.Text += this.Separator;
                 }
                 else
                 {
-                    // Move it behind the separator.
                     if (cursor == split[0].Length && cursor < split[0].Length + 1)
                         cursor = split[0].Length + this.sep.Length;
                     else if (this.SpacesAroundSeparator)
@@ -250,7 +204,6 @@ namespace ThoNohT.NohBoard.Controls
             }
             else if (newChar == ' ')
             {
-                // Space
                 if (!this.spacesAroundSeparator) return;
 
                 if (cursor == split[0].Length || cursor == split[0].Length + this.sep.Length - 1)
@@ -258,14 +211,11 @@ namespace ThoNohT.NohBoard.Controls
             }
             else if (newChar >= 96 && newChar <= 107 || Regex.IsMatch(newChar.ToString(), @"\d"))
             {
-                // Map numpad keys to regular numbers.
                 if (newChar >= 96 && newChar <= 107) newChar = (char)(newChar - 48);
 
-                // Regular numbers
                 if (split.Any() && cursor > split[0].Length && cursor < split[0].Length + this.sep.Length)
                     return;
 
-                // Number or separator
                 this.Text = cursorLength > 0
                     ? $"{oldText.Substring(0, cursor)}{newChar}{oldText.Substring(cursor + cursorLength)}"
                     : $"{oldText.Substring(0, cursor)}{newChar}{oldText.Substring(cursor)}";
@@ -274,11 +224,9 @@ namespace ThoNohT.NohBoard.Controls
             }
             else
             {
-                // Any other key should be completely ignored.
                 return;
             }
 
-            // Format the new text
             if (this.Text == string.Empty)
             {
                 this.Text = $"0{this.sep}0";
@@ -289,26 +237,18 @@ namespace ThoNohT.NohBoard.Controls
             this.FormatText(cursor);
         }
 
-        /// <summary>
-        /// Formats the text inside the textbox and sets the cursor to the specified position.
-        /// The cursor position and selection length are adapted according to the formatting changes that are made.
-        /// </summary>
-        /// <param name="cursor">The position to set the cursor to.</param>
         private void FormatText(int cursor)
         {
             var split = this.Text.Split(new[] { this.Separator, ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            // Determine and constrain the new values.
             var newX = long.Parse(split[0]);
             if (newX > this.maxVal) newX = this.maxVal;
             var newY = split.Length > 1 ? long.Parse(split[1]) : 0;
             if (newY > this.maxVal) newY = this.maxVal;
 
-            // Determine where the cursor should go.
             var makeSelection = false;
             if (cursor <= split[0].Length)
             {
-                // We're in the X part.
                 var leadingZeroes = split[0].Length - newX.ToString().Length;
                 cursor -= leadingZeroes;
 
@@ -320,7 +260,6 @@ namespace ThoNohT.NohBoard.Controls
             }
             else
             {
-                // We're in the Y part.
                 if (split.Length > 1)
                 {
                     var leadingZeroes = split[1].Length - newY.ToString().Length;
@@ -331,22 +270,17 @@ namespace ThoNohT.NohBoard.Controls
                     makeSelection = true;
             }
 
-            // Update the text and set the cursor.
             this.Text = $"{newX}{this.sep}{newY}";
 
             this.SelectionStart = cursor;
             this.SelectionLength = makeSelection ? 1 : 0;
 
-            // Set new values.
             if (this.x == (int)newX && this.y == (int)newY) return;
             this.x = (int)newX;
             this.y = (int)newY;
             this.ValueChanged?.Invoke(this, new TPoint(this.x, this.y));
         }
 
-        /// <summary>
-        /// Updates the text based on the new values and separator settings.
-        /// </summary>
         private void UpdateText()
         {
             var cursor = this.SelectionStart;
@@ -354,9 +288,6 @@ namespace ThoNohT.NohBoard.Controls
             this.SelectionStart = cursor;
         }
 
-        /// <summary>
-        /// Ignores any keypress events because they are already handled in PreviewKeyPress.
-        /// </summary>
         private void IgnoreKey(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
@@ -365,7 +296,6 @@ namespace ThoNohT.NohBoard.Controls
         #endregion Methods
     }
 
-    /// <summary>Unified UI height for single-line text inputs (<see cref="VectorTextBox" />).</summary>
     internal static class FixedHeightTextBox
     {
         public const int FixedUiHeight = 23;

@@ -20,19 +20,10 @@ namespace ThoNohT.NohBoard.Extra
     using System.Collections.Generic;
     using System.Drawing;
 
-    /// <summary>
-    /// A cache for images.
-    /// </summary>
     public static class ImageCache
     {
-        /// <summary>
-        /// A dictionary containing the cached images.
-        /// </summary>
         private static Dictionary<string, Image> Buffer { get; } = new Dictionary<string, Image>();
 
-        /// <summary>
-        /// Clears cached images (call when the loaded style or keyboard category changes).
-        /// </summary>
         public static void Clear()
         {
             foreach (var image in Buffer.Values)
@@ -41,12 +32,6 @@ namespace ThoNohT.NohBoard.Extra
             Buffer.Clear();
         }
 
-        /// <summary>
-        /// Loads the image for the specified filename, in the currently loaded style. If the image exists in cache,
-        /// it is returned from there, otherwise the file is opened and stored in the cache.
-        /// </summary>
-        /// <param name="filename">The filename of the image to load.</param>
-        /// <returns>The loaded image.</returns>
         public static Image Get(string filename)
         {
             var specificPath = FileHelper.GetStyleImagePath(filename);

@@ -19,10 +19,6 @@ namespace ThoNohT.NohBoard.Forms
 {
     using System.Windows.Forms;
 
-    /// <summary>
-    /// Borderless top-level layered surface for per-pixel alpha (MS <c>UpdateLayeredWindow</c>).
-    /// Must not paint via WinForms — pixels come only from <see cref="Extra.LayeredWindowHelper"/>.
-    /// </summary>
     internal sealed class LayeredOverlayForm : Form
     {
         private const int WsExLayered = 0x00080000;

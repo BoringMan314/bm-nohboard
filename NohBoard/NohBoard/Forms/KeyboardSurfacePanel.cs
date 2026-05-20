@@ -21,9 +21,6 @@ namespace ThoNohT.NohBoard.Forms
     using System.Drawing;
     using System.Windows.Forms;
 
-    /// <summary>
-    /// Double-buffered client area for the keyboard overlay.
-    /// </summary>
     internal class KeyboardSurfacePanel : Panel
     {
         public KeyboardSurfacePanel()
@@ -35,9 +32,6 @@ namespace ThoNohT.NohBoard.Forms
             this.BackColor = Color.Black;
         }
 
-        /// <summary>
-        /// When true, the main form presents pixels via <c>UpdateLayeredWindow</c>; this panel must not paint a background.
-        /// </summary>
         internal Func<bool> IsLayeredPresentationActive { get; set; }
 
         protected override void OnPaintBackground(PaintEventArgs e)

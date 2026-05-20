@@ -26,41 +26,19 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
     using Extra;
     using ThoNohT.NohBoard.Keyboard.Styles;
 
-    /// <summary>
-    /// Represents a key on a mouse.
-    /// </summary>
     [DataContract(Name = "KeyboardKey", Namespace = "")]
     public class KeyboardKeyDefinition : KeyDefinition
     {
         #region Properties
 
-        /// <summary>
-        /// The text  that should be shown if shift is pressed.
-        /// </summary>
         [DataMember]
         public string ShiftText { get; private set; }
 
-        /// <summary>
-        /// Indicates whether the <see cref="ShiftText"/> should be shown when caps lock is pressed or not.
-        /// </summary>
-        /// <remarks>This is typically enabled for letters, but disabled for numbers.</remarks>
         [DataMember]
         public bool ChangeOnCaps { get; private set; }
 
         #endregion Properties
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="KeyboardKeyDefinition" /> class.
-        /// </summary>
-        /// <param name="id">The identifier of the key.</param>
-        /// <param name="boundaries">The boundaries.</param>
-        /// <param name="keyCodes">The keycodes.</param>
-        /// <param name="normalText">The normal text.</param>
-        /// <param name="shiftText">The shift text.</param>
-        /// <param name="changeOnCaps">Whether to change to shift text on caps lock.</param>
-        /// <param name="textPosition">The new text position.
-        /// If not provided, the new position will be recalculated from the bounding box of the key.</param>
-        /// <param name="manipulation">The current manipulation.</param>
         public KeyboardKeyDefinition(
             int id,
             List<TPoint> boundaries,
@@ -75,14 +53,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
             this.ChangeOnCaps = changeOnCaps;
         }
 
-
-        /// <summary>
-        /// Renders the key in the specified surface.
-        /// </summary>
-        /// <param name="g">The GDI+ surface to render on.</param>
-        /// <param name="pressed">A value indicating whether to render the key in its pressed state or not.</param>
-        /// <param name="shift">A value indicating whether shift is pressed during the render.</param>
-        /// <param name="capsLock">A value indicating whether caps lock is pressed during the render.</param>
         public void Render(Graphics g, bool pressed, bool shift, bool capsLock)
         {
             var style = GlobalSettings.CurrentStyle.TryGetElementStyle<KeyStyle>(this.Id)
@@ -104,12 +74,10 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 g.FillPolygon(backgroundBrush, this.Boundaries.ConvertAll<Point>(x => x).ToArray());
             }
 
-            // Draw the text
             g.SetClip(this.GetBoundingBox());
             g.DrawString(this.GetText(shift, capsLock), subStyle.Font, new SolidBrush(subStyle.Text), (Point)txtPoint);
             g.ResetClip();
 
-            // Draw the outline.
             if (subStyle.ShowOutline)
             {
                 using var outlinePen = OverlayTransparency.CreateOutlinePen(
@@ -120,11 +88,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
             }
         }
 
-        /// <summary>
-        /// Checks whether this key overlaps with another specified key definition.
-        /// </summary>
-        /// <param name="otherKey">The other key to check for overlapping on.</param>
-        /// <returns><c>True</c> if the keys overlap, <c>false</c> otherwise.</returns>
         public bool BordersWith(KeyboardKeyDefinition otherKey)
         {
             var clipper = new Clipper();
@@ -140,12 +103,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
         #region Transformations
 
-        /// <summary>
-        /// Translates the element, moving it the specified distance.
-        /// </summary>
-        /// <param name="dx">The distance along the x-axis.</param>
-        /// <param name="dy">The distance along the y-axis.</param>
-        /// <returns>A new <see cref="ElementDefinition"/> that is translated.</returns>
         public override ElementDefinition Translate(int dx, int dy)
         {
             return new KeyboardKeyDefinition(
@@ -159,12 +116,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Renders a simple representation of the element while it is being edited. This representation does not depend
-        /// on the state of the program and is merely intended to provide a clear overview of the current position and
-        /// shape of the element.
-        /// </summary>
-        /// <param name="g">The graphics context to render to.</param>
         public override void RenderEditing(Graphics g)
         {
             base.RenderEditing(g);
@@ -179,19 +130,12 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.TextPosition.X - (int)(txtSize.Width / 2),
                 this.TextPosition.Y - (int)(txtSize.Height / 2));
 
-            // Draw the text
             g.SetClip(this.GetBoundingBox());
             g.DrawString(this.GetText(false, false), subStyle.Font, new SolidBrush(subStyle.Text), (Point)txtPoint);
             g.ResetClip();
 
         }
 
-        /// <summary>
-        /// Moves a boundary point by the specified distance.
-        /// </summary>
-        /// <param name="index">The index of the boundary point in <see cref="KeyDefinition.Boundaries"/>.</param>
-        /// <param name="diff">The distance to move the boundary point.</param>
-        /// <returns>A new key definition with the moved boundary.</returns>
         protected override KeyDefinition MoveBoundary(int index, Size diff)
         {
             if (index < 0 || index >= this.Boundaries.Count)
@@ -208,11 +152,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Moves the text inside the key by the specified ditsance.
-        /// </summary>
-        /// <param name="diff">The distance to move the text.</param>
-        /// <returns>A new key definition with the moved text.</returns>
         protected override KeyDefinition MoveText(Size diff)
         {
             return new KeyboardKeyDefinition(
@@ -226,13 +165,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Moves an edge by the specified distance.
-        /// </summary>
-        /// <param name="index">The index of the edge as specified by the first of the two boundaries defining it in
-        /// <see cref="KeyDefinition.Boundaries"/>.</param>
-        /// <param name="diff">The distance to move the edge.</param>
-        /// <returns>A new key definition with the moved edge.</returns>
         protected override KeyDefinition MoveEdge(int index, Size diff)
         {
             if (index < 0 || index >= this.Boundaries.Count)
@@ -240,7 +172,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
             bool doUpdate(int i) => i == index || i == (index + 1) % this.Boundaries.Count;
 
-            // Project the mouse movement onto the orthogonal vector.
             var edgeBoundaries = this.Boundaries.Where((b, i) => doUpdate(i)).ToList();
             var edgeVector = (SizeF)(edgeBoundaries[1] - edgeBoundaries[0]);
             var othogonalVector = edgeVector.RotateDegrees(90);
@@ -257,10 +188,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Removes the highlighted boundary.
-        /// </summary>
-        /// <returns>The new version of this key definition with the boundary removed.</returns>
         public override KeyDefinition RemoveBoundary()
         {
             if (this.RelevantManipulation == null) return this;
@@ -281,11 +208,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.RelevantManipulation);
         }
 
-        /// <summary>
-        /// Adds a boundary on the edge that is highlighted.
-        /// </summary>
-        /// <param name="location">To location to add the point at.</param>
-        /// <returns>The new version of this key definition with the boundary added.</returns>
         public override KeyDefinition AddBoundary(TPoint location)
         {
             if (this.RelevantManipulation == null) return this;
@@ -306,39 +228,16 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Updates the key definition to occupy a region of itself plus the specified other keys.
-        /// </summary>
-        /// <param name="keys">The keys to union with.</param>
-        /// <returns>A new key definition with the updated region.</returns>
         public override KeyDefinition UnionWith(List<KeyDefinition> keys)
         {
             return this.UnionWith(keys.ConvertAll(x => (KeyboardKeyDefinition)x));
         }
 
-        /// <summary>
-        /// Returns a new version of this element definition with the specified properties changed.
-        /// </summary>
-        /// <param name="boundaries">The new boundaries, or <c>null</c> if not changed.</param>
-        /// <param name="keyCode">The new key code, or <c>null</c> if not changed.</param>
-        /// <param name="text">The new text, or <c>null</c> if not changed.</param>
-        /// <param name="textPosition">The new text position, or <c>null</c> if not changed.</param>
-        /// <returns>The new element definition.</returns>
         public override KeyDefinition ModifyMouse(List<TPoint> boundaries = null, int? keyCode = null, string text = null, TPoint textPosition = null)
         {
             throw new Exception("Cannot modify  the mouse properties of a keyboard key.");
         }
 
-        /// <summary>
-        /// Returns a new version of this element definition with the specified properties changed.
-        /// </summary>
-        /// <param name="boundaries">The new boundaries, or <c>null</c> if not changed.</param>
-        /// <param name="keyCodes">The new key codes, or <c>null</c> if not changed.</param>
-        /// <param name="text">The new text, or <c>null</c> if not changed.</param>
-        /// <param name="shiftText">The new shift text, or <c>null</c> if not changed.</param>
-        /// <param name="changeOnCaps">The new change on caps, or <c>null</c> if not changed.</param>
-        /// <param name="textPosition">The new text position, or <c>null</c> if not changed.</param>
-        /// <returns>The new element definition.</returns>
         public KeyboardKeyDefinition Modify(
             List<TPoint> boundaries = null, List<int> keyCodes = null, string text = null, string shiftText = null,
             bool? changeOnCaps = null, TPoint textPosition = null)
@@ -358,25 +257,14 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
         #region Private methods
 
-        /// <summary>
-        /// Determines whether to use the shift text or the regular text for this key depening on the shift, caps lock
-        /// state and the key's properties. Returns the text that should be displayed for this state.
-        /// </summary>
-        /// <param name="shift">Whether shift is pressed.</param>
-        /// <param name="capsLock">Whether caps lock is active.</param>
-        /// <returns>The text to display for this key.</returns>
         private string GetText(bool shift, bool capsLock)
         {
             if (GlobalSettings.Settings.Capitalization != CapitalizationMethod.FollowKeys)
             {
-                // Caps lock is set based on the capitalization method.
                 capsLock = GlobalSettings.Settings.Capitalization == CapitalizationMethod.Capitalize;
 
-                // If follow shift for caps insensitive keys is true, then don't edit the shift value if ChangeOnCaps.
-                // If follow shift for caps sensitive keys is true, then don't edit the shift value if not ChangeOnCaps.
                 var preserveShift = GlobalSettings.Settings.FollowShiftForCapsInsensitive && !this.ChangeOnCaps
                                     || GlobalSettings.Settings.FollowShiftForCapsSensitive && this.ChangeOnCaps;
-                // Shift is ignored, but only if the follow shift is not set for this key's ChangeOnCaps setting.
                 shift &= preserveShift;
             }
 
@@ -384,11 +272,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
             return capitalize ? this.ShiftText : this.Text;
         }
 
-        /// <summary>
-        /// Updates the key definition to occupy a region of itself plus the specified other keys.
-        /// </summary>
-        /// <param name="keys">The keys to union with.</param>
-        /// <returns>A new key definition with the updated region.</returns>
         private KeyboardKeyDefinition UnionWith(IList<KeyboardKeyDefinition> keys)
         {
             var newBoundaries = this.Boundaries.Select(b => new TPoint(b.X, b.Y)).ToList();
@@ -416,10 +299,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.ChangeOnCaps);
         }
 
-        /// <summary>
-        /// Returns a clone of this element definition.
-        /// </summary>
-        /// <returns>The cloned element definition.</returns>
         public override ElementDefinition Clone()
         {
             return new KeyboardKeyDefinition(
@@ -433,11 +312,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Checks whether the definition has changes relative to the specified other definition.
-        /// </summary>
-        /// <param name="other">The definition to compare against.</param>
-        /// <returns>True if the definition has changes, false otherwise.</returns>
         public override bool IsChanged(ElementDefinition other)
         {
             if (!(other is KeyboardKeyDefinition kkd)) return true;
@@ -450,7 +324,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
             if (this.Boundaries.Count != kkd.Boundaries.Count) return true;
 
-            // Boundary order change is also a change. So loop through them all.
             for (var i = 0; i < this.Boundaries.Count; i++)
             {
                 if (this.Boundaries[i].IsChanged(kkd.Boundaries[i])) return true;

@@ -37,19 +37,10 @@ namespace ThoNohT.NohBoard.Forms
 
         private bool _keyboardSurfaceDetachedFromMainForm;
 
-        /// <summary>
-        /// While a modal dialog is open, the keyboard overlay is kept under the dialog but still above the main form.
-        /// </summary>
         private bool _layeredOverlayModalMode;
 
-        /// <summary>
-        /// Modal dialog currently shown by <see cref="ShowAppModalDialog"/> (for Z-order refresh while layered).
-        /// </summary>
         private Form _activeAppModalDialog;
 
-        /// <summary>
-        /// While &gt; 0, skip layered repaints that steal focus from menus or modal dialogs.
-        /// </summary>
         private int _suspendLayeredKeyboardUpdates;
 
         private void InitializeLayeredOverlay()
@@ -93,9 +84,6 @@ namespace ThoNohT.NohBoard.Forms
 
         internal bool IsLayeredOverlayActive => this.UsesLayeredOverlay();
 
-        /// <summary>
-        /// True when desktop see-through uses <c>UpdateLayeredWindow</c> (not GDI+ alpha on an opaque surface).
-        /// </summary>
         private bool UsesLayeredOverlay()
         {
             if (GlobalSettings.Settings == null || GlobalSettings.CurrentDefinition == null)
@@ -148,17 +136,12 @@ namespace ThoNohT.NohBoard.Forms
                 this.InvalidateKeyboardSurface();
             }
 
-            // ClearMainFormLayeredStyles() stripped lock pass-through bits from the main HWND; restore lock styling.
             if (this._overlayLocked)
                 this.ApplyOverlayLockStyles();
 
             this.ApplyTaskSwitcherIconicPreviewPreference();
         }
 
-        /// <summary>
-        /// Layered mode: main window is caption-only; keyboard pixels live on a separate top-level layered HWND
-        /// so transparent areas reveal the desktop (not this form's opaque client area).
-        /// </summary>
         private void ApplyKeyboardWindowLayout()
         {
             var definition = GlobalSettings.CurrentDefinition;
@@ -242,9 +225,6 @@ namespace ThoNohT.NohBoard.Forms
                 (int)Math.Round(point.Y / scale));
         }
 
-        /// <summary>
-        /// Main form keeps the title bar only; keyboard pixels are on the layered overlay HWND.
-        /// </summary>
         private void ShrinkMainFormToCaptionOnly(int keyboardWidth)
         {
             var chrome = this.Size - this.ClientSize;
@@ -269,9 +249,6 @@ namespace ThoNohT.NohBoard.Forms
             this.BringLayeredOverlayToFront();
         }
 
-        /// <summary>
-        /// Shows a modal dialog without the layered keyboard stealing focus or input (trap hooks paused).
-        /// </summary>
         internal DialogResult ShowAppModalDialog(Form dialog)
         {
             HookManager.EnterModalUiScope();
@@ -291,9 +268,7 @@ namespace ThoNohT.NohBoard.Forms
                 this._activeAppModalDialog = dialog;
                 try
                 {
-                    return this.IsLayeredOverlayActive
-                        ? dialog.ShowDialog()
-                        : dialog.ShowDialog(this);
+                    return dialog.ShowDialog(this);
                 }
                 finally
                 {
@@ -302,16 +277,13 @@ namespace ThoNohT.NohBoard.Forms
             }
             finally
             {
+                HookManager.ExitModalUiScope();
+
                 if (beganLayeredModal)
                     this.EndLayeredOverlayModalMode();
-
-                HookManager.ExitModalUiScope();
             }
         }
 
-        /// <summary>
-        /// Shows a system MessageBox that remains clickable while the layered keyboard overlay is active.
-        /// </summary>
         internal DialogResult ShowAppMessageBox(
             string text,
             string caption,
@@ -321,29 +293,31 @@ namespace ThoNohT.NohBoard.Forms
             HookManager.EnterModalUiScope();
 
             var beganLayeredModal = false;
-            var overlayClickThrough = false;
             try
             {
                 if (this.IsLayeredOverlayActive)
                 {
                     this.BeginLayeredOverlayModalMode();
                     beganLayeredModal = true;
-                    this.ApplyLayeredOverlayPointerStyles(true);
-                    overlayClickThrough = true;
                 }
 
                 return MessageBox.Show(this, text, caption, buttons, icon);
             }
             finally
             {
-                if (overlayClickThrough)
-                    this.ApplyLayeredOverlayPointerStyles(this._overlayLocked);
+                HookManager.ExitModalUiScope();
 
                 if (beganLayeredModal)
                     this.EndLayeredOverlayModalMode();
-
-                HookManager.ExitModalUiScope();
             }
+        }
+
+        internal void PrepareDialogAboveLayeredOverlay(Form dialog)
+        {
+            if (dialog == null || dialog.IsDisposed || !this.IsLayeredOverlayActive)
+                return;
+
+            this.WireDialogAboveLayeredOverlay(dialog);
         }
 
         private void WireDialogAboveLayeredOverlay(Form dialog)
@@ -356,12 +330,18 @@ namespace ThoNohT.NohBoard.Forms
 
                 stacked = true;
                 this.PlaceDialogAboveLayeredOverlay(dialog);
+                this.FocusModalDialog(dialog);
             };
         }
 
-        /// <summary>
-        /// Puts a modal dialog above the layered keyboard so it receives focus and clicks.
-        /// </summary>
+        private void FocusModalDialog(Form dialog)
+        {
+            if (dialog == null || dialog.IsDisposed)
+                return;
+
+            FormPlacement.FocusMainForm(dialog);
+        }
+
         internal void PlaceDialogAboveLayeredOverlay(Form dialog)
         {
             if (dialog == null || dialog.IsDisposed)
@@ -398,11 +378,11 @@ namespace ThoNohT.NohBoard.Forms
                 this.ApplyOverlayTransparencyStyle();
 
             this.RestoreOverlayInteractionAfterModal();
+
+            if (this.UsesLayeredOverlay() && !this._overlayLocked)
+                this.ApplyLayeredOverlayPointerStyles(false);
         }
 
-        /// <summary>
-        /// Re-enables hit-testing and context menu on the keyboard surface after a modal dialog closes.
-        /// </summary>
         internal void RestoreOverlayInteractionAfterModal()
         {
             this.WireLayeredOverlayContextMenu();
@@ -411,7 +391,6 @@ namespace ThoNohT.NohBoard.Forms
             if (this.UsesLayeredOverlay() && this._layeredOverlay != null)
             {
                 this._layeredOverlay.Enabled = true;
-                this.BringLayeredOverlayToFront();
                 this.PresentLayeredOverlay();
             }
         }
@@ -424,9 +403,6 @@ namespace ThoNohT.NohBoard.Forms
             this._layeredOverlay.ContextMenuStrip = this.MainMenu;
         }
 
-        /// <summary>
-        /// Maps the cursor to client coordinates on the surface that owns the context menu.
-        /// </summary>
         private Point GetContextMenuClientPoint()
         {
             if (this.IsLayeredOverlayActive
@@ -561,7 +537,6 @@ namespace ThoNohT.NohBoard.Forms
             if (this._layeredOverlay == null || this._layeredOverlay.IsDisposed)
                 return;
 
-            // Layered HWND often does not raise ContextMenuStrip automatically.
             this.MainMenu.Show(this._layeredOverlay, e.Location);
         }
 

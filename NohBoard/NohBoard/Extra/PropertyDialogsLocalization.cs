@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace ThoNohT.NohBoard.Extra
 {
-    /// <summary>
-    /// Localized UI strings for keyboard/mouse property dialogs (edit mode).
-    /// </summary>
     internal static class PropertyDialogsLocalization
     {
         public static string Cancel => UiTranslate.T("Cancel", "取消", "取消", "キャンセル");

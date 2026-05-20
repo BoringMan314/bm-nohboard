@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -19,57 +19,25 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 {
     using System.Drawing;
 
-    /// <summary>
-    /// Indicates in what way an element is being manipulated.
-    /// </summary>
     public class ElementManipulation
     {
-        /// <summary>
-        /// The manipulation type.
-        /// </summary>
         public ElementManipulationType Type { get; set; }
 
-        /// <summary>
-        /// The index of the thing inside the element that is being manipulated.
-        /// Relevant for MoveBoundary, MoveEdge.
-        /// </summary>
         public int Index { get; set; }
 
-        /// <summary>
-        /// The direction of the manipulation.
-        /// Relevant for nothing yet
-        /// </summary>
         public SizeF Direction { get; set; }
     }
 
-    /// <summary>
-    /// The type of manipulation being performed.
-    /// </summary>
     public enum ElementManipulationType
     {
-        /// <summary>
-        /// Translate the entire element.
-        /// </summary>
         Translate,
 
-        /// <summary>
-        /// Move a single boundary in the element.
-        /// </summary>
         MoveBoundary,
 
-        /// <summary>
-        /// Move an edge in the element.
-        /// </summary>
         MoveEdge,
 
-        /// <summary>
-        /// Scale an element.
-        /// </summary>
         Scale,
 
-        /// <summary>
-        /// Move text within an element.
-        /// </summary>
         MoveText,
     }
 }

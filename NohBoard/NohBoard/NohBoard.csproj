@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -8,6 +8,7 @@
     <Nullable>disable</Nullable>
     <SupportedOSPlatformVersion>6.1</SupportedOSPlatformVersion>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
+    <AssemblyName>bm-nohboard</AssemblyName>
     <RootNamespace>ThoNohT.NohBoard</RootNamespace>
     <StartupObject>ThoNohT.NohBoard.Program</StartupObject>
     <ApplicationIcon>NohBoard.ico</ApplicationIcon>

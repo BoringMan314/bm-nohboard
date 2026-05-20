@@ -16,20 +16,13 @@ namespace ThoNohT.NohBoard.Forms
     using System.Windows.Forms;
     using ThoNohT.NohBoard.Extra;
 
-    /// <summary>
-    /// Shared placement rules for modal dialogs opened from the app.
-    /// </summary>
     internal static class FormPlacement
     {
         public const int DefaultWindowOffsetX = 100;
         public const int DefaultWindowOffsetY = 100;
 
-        /// <summary>Horizontal gap between keyboard right edge and dialog (pixels).</summary>
         public const int BesideMainKeyboardGapPixels = 12;
 
-        /// <summary>
-        /// Top-left of the main window on the primary screen (offset 100, 100), matching other B.M. tools.
-        /// </summary>
         public static Point GetDefaultMainWindowLocation()
         {
             var screen = Screen.PrimaryScreen ?? Screen.AllScreens.FirstOrDefault();
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms
                 screen.Bounds.Top + DefaultWindowOffsetY);
         }
 
-        /// <summary>
-        /// When the main form is hidden (tray), <see cref="Control.PointToScreen"/> is unreliable.
-        /// Temporarily anchor the Form to the shared default location so dialog placement stays consistent.
-        /// </summary>
         public static void PrepareMainWindowAnchorBeforeDialog(MainForm main)
         {
             if (main == null || main.IsDisposed)
@@ -89,9 +78,6 @@ namespace ThoNohT.NohBoard.Forms
             return new Point(x, y);
         }
 
-        /// <summary>
-        /// Moves the main overlay to the default screen position (primary screen + fixed offset).
-        /// </summary>
         public static void MoveMainFormToDefaultPosition(MainForm form)
         {
             if (form == null || form.IsDisposed)
@@ -102,9 +88,6 @@ namespace ThoNohT.NohBoard.Forms
             form.Location = location;
         }
 
-        /// <summary>
-        /// Brings the form to the foreground (tray restore).
-        /// </summary>
         public static void FocusMainForm(Form form)
         {
             if (form == null || form.IsDisposed)
@@ -124,9 +107,6 @@ namespace ThoNohT.NohBoard.Forms
             SetForegroundWindow(hwnd);
         }
 
-        /// <summary>
-        /// Resolves scaled keyboard width in pixels (matches main overlay client width).
-        /// </summary>
         public static int GetScaledKeyboardWidthPixels(MainForm main)
         {
             var keyboardWidth = GlobalSettings.CurrentDefinition?.Width ?? 0;
@@ -138,11 +118,6 @@ namespace ThoNohT.NohBoard.Forms
             return Math.Max(keyboardWidth, 1);
         }
 
-        /// <summary>
-        /// Places the dialog to the right of the keyboard (client left + scaled width + gap).
-        /// Vertically aligns with the <strong>main window top</strong> (same screen Y as the caption), not the client
-        /// area below the title bar, so it looks level with the main UI.
-        /// </summary>
         public static void AlignBesideMainKeyboard(MainForm main, Form dialog, int gapPixels = BesideMainKeyboardGapPixels)
         {
             if (main == null || dialog == null)
@@ -180,29 +155,19 @@ namespace ThoNohT.NohBoard.Forms
             }
             catch (ArgumentException)
             {
-                // Screen.FromControl failed; keep unclamped position.
             }
         }
 
-        /// <summary>
-        /// Same as <see cref="AlignDialogBesideMainKeyboard"/> (kept for existing call sites).
-        /// </summary>
         public static void AlignTopLeftWithMainWindow(Form dialog)
         {
             AlignDialogBesideMainKeyboard(dialog);
         }
 
-        /// <summary>
-        /// Places settings to the right of the keyboard (same as <see cref="AlignBesideMainKeyboard"/>).
-        /// </summary>
         public static void AlignSettingsBesideOverlay(MainForm main, Form dialog)
         {
             AlignBesideMainKeyboard(main, dialog);
         }
 
-        /// <summary>
-        /// Positions a modal dialog to the right of the main keyboard UI.
-        /// </summary>
         public static void AlignModalDialog(MainForm main, Form dialog)
         {
             if (main == null || dialog == null)
@@ -211,9 +176,6 @@ namespace ThoNohT.NohBoard.Forms
             AlignBesideMainKeyboard(main, dialog);
         }
 
-        /// <summary>
-        /// Positions a dialog using the main form if it exists; otherwise centers on screen.
-        /// </summary>
         public static void AlignDialogBesideMainKeyboard(Form dialog)
         {
             if (dialog == null)

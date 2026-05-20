@@ -48,10 +48,6 @@ namespace ThoNohT.NohBoard.Forms
 
         private bool _savedTopMost;
 
-        /// <summary>
-        /// While overlay is locked in layered mode, the caption is replaced with a 1×1 borderless anchor
-        /// so the title bar does not show; restored when unlocking.
-        /// </summary>
         private bool _captionHiddenForOverlayLock;
 
         private FormBorderStyle _restoreOverlayLockBorderStyle;
@@ -192,11 +188,6 @@ namespace ThoNohT.NohBoard.Forms
             this._captionHiddenForOverlayLock = true;
         }
 
-        /// <summary>
-        /// <see cref="MainForm.ApplyKeyboardWindowLayout"/> calls <see cref="MainForm.ShrinkMainFormToCaptionOnly"/>,
-        /// which shows the title bar again while <c>_captionHiddenForOverlayLock</c> stayed true — hiding then early-
-        /// returns. Restore to caption-only for the current keyboard width, then re-apply the 1×1 borderless anchor.
-        /// </summary>
         private void RefreshLockedOverlayCaptionHide(int keyboardWidth)
         {
             if (!this._overlayLocked || !this.UsesLayeredOverlay())

@@ -31,44 +31,28 @@ namespace ThoNohT.NohBoard.Forms
     using System.IO;
     using System.Linq;
     using System.Net.Http;
-    using System.Runtime.Serialization.Json;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using System.Windows.Forms;
-    using System.Xml;
     using ThoNohT.NohBoard.Keyboard.Styles;
     using Version = NohBoard.Version;
 
-    /// <summary>
-    /// The main form.
-    /// </summary>
     public partial class MainForm : Form
     {
         #region Fields
 
-        /// <summary>
-        /// The back-brushes used for efficient drawing.
-        /// </summary>
         private readonly Dictionary<bool, Dictionary<bool, Brush>> backBrushes =
             new Dictionary<bool, Dictionary<bool, Brush>>();
 
-        /// <summary>
-        /// The element currently under the cursor.
-        /// </summary>
         private ElementDefinition elementUnderCursor = null;
 
-        /// <summary>
-        /// The latest version, if it was retrieved from the update site.
-        /// </summary>
         private VersionInfo latestVersion = null;
 
         #endregion Fields
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainForm" /> class.
-        /// </summary>
         public MainForm()
         {
             this.InitializeComponent();
@@ -87,10 +71,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #endregion Constructors
 
-        /// <summary>
-        /// Use the same icon as the PE / File Explorer for the main window (taskbar, Alt+Tab strip, tray inherit <see cref="Form.Icon"/>).
-        /// Avoids mismatch when the designer-embedded resource icon differs from <c>ApplicationIcon</c>.
-        /// </summary>
         private void ApplyExecutableIconAsWindowIcon()
         {
             try
@@ -108,15 +88,11 @@ namespace ThoNohT.NohBoard.Forms
             }
             catch
             {
-                // Keep designer / resx icon.
             }
         }
 
         #region Version check
 
-        /// <summary>
-        /// Fetches the published latest version (non-blocking) and refreshes the menu when newer.
-        /// </summary>
         private void StartLatestVersionCheck()
         {
             _ = this.CheckLatestVersionAsync();
@@ -124,64 +100,80 @@ namespace ThoNohT.NohBoard.Forms
 
         private async Task CheckLatestVersionAsync()
         {
-            const string updateUrl =
-                "https://gist.githubusercontent.com/ThoNohT/3181561f8148fb6b865f88714e975154/raw/nohboard_version.json";
-
             try
             {
                 using (var client = new HttpClient { Timeout = TimeSpan.FromSeconds(15) })
                 {
-                    await using (var stream = await client.GetStreamAsync(updateUrl).ConfigureAwait(false))
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd(Constants.AppId);
+                    var json = await client.GetStringAsync(
+                        "https://api.github.com/repos/BoringMan314/bm-nohboard/releases/latest")
+                        .ConfigureAwait(false);
+
+                    using (var doc = JsonDocument.Parse(json))
                     {
-                        var serializer = new DataContractJsonSerializer(typeof(VersionInfo));
-                        using (var reader = JsonReaderWriterFactory.CreateJsonReader(
-                            stream,
-                            Encoding.UTF8,
-                            XmlDictionaryReaderQuotas.Max,
-                            _ => { }))
+                        if (!doc.RootElement.TryGetProperty("tag_name", out var tagProp))
+                            return;
+
+                        var tag = tagProp.GetString();
+                        if (string.IsNullOrWhiteSpace(tag) || !TryParseReleaseTag(tag, out var versionInfo))
+                            return;
+
+                        var isNewer =
+                            versionInfo.Major > Version.Major
+                            || (versionInfo.Major == Version.Major && versionInfo.Minor > Version.Minor)
+                            || (versionInfo.Major == Version.Major && versionInfo.Minor == Version.Minor
+                                && versionInfo.Patch > Version.Patch);
+
+                        if (!isNewer)
+                            return;
+
+                        void applyOnUi()
                         {
-                            var versionInfo = (VersionInfo)serializer.ReadObject(reader);
-                            var isNewer =
-                                (versionInfo.Major > Version.Major) ||
-                                (versionInfo.Major == Version.Major && versionInfo.Minor > Version.Minor) ||
-                                (versionInfo.Major == Version.Major && versionInfo.Minor == Version.Minor
-                                 && versionInfo.Patch > Version.Patch);
-
-                            if (!isNewer)
-                                return;
-
-                            void applyOnUi()
-                            {
-                                if (this.IsDisposed)
-                                    return;
-                                this.latestVersion = versionInfo;
-                                this.ApplyLocalizedMainMenu();
-                            }
-
                             if (this.IsDisposed)
                                 return;
-
-                            if (this.InvokeRequired)
-                                this.BeginInvoke(new Action(applyOnUi));
-                            else
-                                applyOnUi();
+                            this.latestVersion = versionInfo;
+                            this.ApplyLocalizedMainMenu();
                         }
+
+                        if (this.IsDisposed)
+                            return;
+
+                        if (this.InvokeRequired)
+                            this.BeginInvoke(new Action(applyOnUi));
+                        else
+                            applyOnUi();
                     }
                 }
             }
             catch
             {
-                // Network or parse failures are ignored.
             }
+        }
+
+        private static bool TryParseReleaseTag(string tag, out VersionInfo versionInfo)
+        {
+            versionInfo = null;
+            var t = tag.Trim();
+            if (t.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+                t = t.Substring(1);
+
+            var parts = t.Split('.');
+            if (parts.Length < 3)
+                return false;
+
+            if (!int.TryParse(parts[0], out var major)
+                || !int.TryParse(parts[1], out var minor)
+                || !int.TryParse(parts[2], out var patch))
+                return false;
+
+            versionInfo = new VersionInfo { Major = major, Minor = minor, Patch = patch };
+            return true;
         }
 
         #endregion Version check
 
         #region Keyboard loading and saving
 
-        /// <summary>
-        /// Reloads the keyboard definition file for the active style (e.g. portrait <c>keyboard.v3.json</c>).
-        /// </summary>
         private void ReloadDefinitionForLoadedStyle()
         {
             var category = GlobalSettings.Settings.LoadedCategory;
@@ -194,11 +186,6 @@ namespace ThoNohT.NohBoard.Forms
                 false);
         }
 
-        /// <summary>
-        /// Loads the keyboard currently defined in the settings.
-        /// </summary>
-        /// <returns>The list of fonts that are not present on this system and might be downloaded for this keyboard.
-        /// </returns>
         private List<SerializableFont> LoadKeyboard()
         {
             if (GlobalSettings.CurrentDefinition == null)
@@ -210,24 +197,20 @@ namespace ThoNohT.NohBoard.Forms
                 this.ApplyOverlayTransparencyStyle();
                 return new List<SerializableFont>();
             }
-            // Enable the mouse hook only if there are mouse keys on the screen.
             if (GlobalSettings.CurrentDefinition.Elements.Any(x => !(x is KeyboardKeyDefinition)))
                 HookManager.EnableMouseHook();
             else
                 HookManager.DisableMouseHook();
 
-            // Enable the keyboard hook only if there are keyboard keys on the screen.
             if (GlobalSettings.CurrentDefinition.Elements.Any(x => x is KeyboardKeyDefinition))
                 HookManager.EnableKeyboardHook();
             else
                 HookManager.DisableKeyboardHook();
 
-            //Prompt to download any fonts we don't have yet.
             var missingFonts = this.CheckMissingFonts();
 
             GlobalSettings.Settings.InitUndoHistory();
 
-            // Reset all edit mode related fields, as we should be no longer in edit mode.
             if (this.mnuToggleEditMode.Checked)
             {
                 this.mnuToggleEditMode.Checked = false;
@@ -244,9 +227,6 @@ namespace ThoNohT.NohBoard.Forms
             return missingFonts;
         }
 
-        /// <summary>
-        /// Resizes the keyboard surface and forces a full repaint after the loaded definition or style changed.
-        /// </summary>
         private void RefreshKeyboardDisplayAfterDefinitionChange()
         {
             if (this.UsesLayeredOverlay())
@@ -269,12 +249,6 @@ namespace ThoNohT.NohBoard.Forms
             this.ApplyOverlayTransparencyStyle();
         }
 
-        /// <summary>
-        /// Checks if there are any fonts that are not on the system, and do have a download link in them. If this is
-        /// the case, then those fonts are returned.
-        /// </summary>
-        /// <returns>The list of fonts that are not present and might be downloaded. Missing fonts without a download
-        /// link are also returned.</returns>
         private List<SerializableFont> CheckMissingFonts()
         {
             var style = GlobalSettings.CurrentStyle;
@@ -289,7 +263,6 @@ namespace ThoNohT.NohBoard.Forms
 
             foreach (var font in notInstalledUsedFonts)
             {
-                // For now, update the used family to the default. Next time they could have downloaded the font.
                 font.AlternateFontFamily = SystemFonts.DefaultFont.FontFamily.Name;
             }
 
@@ -298,11 +271,6 @@ namespace ThoNohT.NohBoard.Forms
             return notInstalledUsedFonts.OrderBy(f => f.DownloadUrl == null).Distinct(new SerializableFont.FamilyComparer()).ToList();
         }
 
-        /// <summary>
-        /// Redraws the back-brushes. These back-brushes are drawn for all possible states of the keys when none of them
-        /// are pressed. This prevents having to render each of these keys every time. However, every time anything
-        /// about the definition or style changes, the back-brushes have to be re-rendered.
-        /// </summary>
         private void ResetBackBrushes()
         {
             GlobalSettings.StyleDependencyCounter++;
@@ -332,7 +300,6 @@ namespace ThoNohT.NohBoard.Forms
 
             var keyboardBounds = new Rectangle(0, 0, definition.Width, definition.Height);
 
-            // Fill the back-brushes.
             foreach (var shift in new[] { false, true })
             {
                 this.backBrushes.Add(shift, new Dictionary<bool, Brush>());
@@ -347,7 +314,6 @@ namespace ThoNohT.NohBoard.Forms
                     {
                         g.Clear(Color.Transparent);
 
-                        // Render the background image if set.
                         var cs = GlobalSettings.CurrentStyle;
                         if (cs.BackgroundImageFileName != null
                             && FileHelper.StyleImageExists(cs.BackgroundImageFileName))
@@ -359,7 +325,6 @@ namespace ThoNohT.NohBoard.Forms
                                 GlobalSettings.Settings.OverlayTransparencyPercent);
                         }
 
-                        // Render the individual keys.
                         foreach (var def in definition.Elements)
                         {
                             if (def is KeyboardKeyDefinition)
@@ -371,7 +336,6 @@ namespace ThoNohT.NohBoard.Forms
                             if (def is MouseScrollDefinition)
                                 ((MouseScrollDefinition)def).Render(g, 0);
 
-                            // No need to render mouse speed indicators in backbrush.
                         }
                     }
 
@@ -382,15 +346,11 @@ namespace ThoNohT.NohBoard.Forms
             this.InvalidateKeyboardSurface(immediate: true);
         }
 
-        /// <summary>
-        /// Opens the load keyboard form.
-        /// </summary>
         private void mnuLoadKeyboard_Click(object sender, EventArgs e)
         {
             if (HasUnsavedChangesPendingUserPrompt())
             {
-                var result = MessageBox.Show(
-                    this,
+                var result = this.ShowAppMessageBox(
                     UiTranslate.T(
                         "You have unsaved changes. Loading a new keyboard will undo them. Are you sure you want to load a new keyboard?",
                         "有尚未儲存的變更。載入新鍵盤將放棄這些變更。確定要載入嗎？",
@@ -417,7 +377,6 @@ namespace ThoNohT.NohBoard.Forms
                     var backupKbStyle = GlobalSettings.Settings.LoadedStyle;
                     var backupkbGlobalStyle = GlobalSettings.Settings.LoadedGlobalStyle;
 
-                    // Don't worry about undo history, it will be initialized alter in LoadKeyboard.
                     GlobalSettings.Settings.UpdateDefinition(kbDef, false);
                     GlobalSettings.Settings.UpdateStyle(kbStyle ?? new KeyboardStyle(), false);
 
@@ -443,14 +402,16 @@ namespace ThoNohT.NohBoard.Forms
 
                         this.LoadKeyboard();
 
-                        MessageBox.Show(
-                            this,
+                        this.ShowAppMessageBox(
                             ex.Message + Environment.NewLine
                             + UiTranslate.T(
                                 "Reverted keyboard change.",
                                 "已還原鍵盤變更。",
                                 "已还原键盘更改。",
-                                "キーボードの変更を元に戻しました。"));
+                                "キーボードの変更を元に戻しました。"),
+                            UiTranslate.T("Error", "錯誤", "错误", "エラー"),
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
                     }
                 };
 
@@ -458,9 +419,6 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// Saves the current definition under its default name.
-        /// </summary>
         private void mnuSaveDefinitionAsName_Click(object sender, EventArgs e)
         {
             this.menuOpen = false;
@@ -470,9 +428,6 @@ namespace ThoNohT.NohBoard.Forms
             GlobalSettings.Settings.LoadedKeyboard = GlobalSettings.CurrentDefinition.Name;
         }
 
-        /// <summary>
-        /// Opens a form the save the current definition under a custom name.
-        /// </summary>
         private void mnuSaveDefinitionAs_Click(object sender, EventArgs e)
         {
             this.menuOpen = false;
@@ -485,28 +440,24 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Settings
 
-        /// <summary>
-        /// Handles the loading of the form, all settings are read, hooks are created and the keyboard is initialized.
-        /// </summary>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // Load the settings
             if (!GlobalSettings.Load())
             {
-                MessageBox.Show(
-                    this,
+                this.ShowAppMessageBox(
                     $"{UiTranslate.T("Failed to load the settings:", "無法載入設定：", "无法加载设置：", "設定を読み込めません：")} {GlobalSettings.Errors}",
-                    UiTranslate.T("Failed to load settings", "載入設定失敗", "加载设置失败", "設定の読み込み失敗"));
+                    UiTranslate.T("Failed to load settings", "載入設定失敗", "加载设置失败", "設定の読み込み失敗"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
 
             FormPlacement.MoveMainFormToDefaultPosition(this);
             var title = GlobalSettings.Settings.WindowTitle;
 
-            this.Text = string.IsNullOrWhiteSpace(title) ? $"NohBoard {Version.Get}" : title;
+            this.Text = string.IsNullOrWhiteSpace(title) ? Version.DefaultTitle : title;
 
             this.StartLatestVersionCheck();
 
-            // Load a definition if possible.
             if (GlobalSettings.Settings.LoadedKeyboard != null && GlobalSettings.Settings.LoadedCategory != null)
             {
                 try
@@ -518,20 +469,21 @@ namespace ThoNohT.NohBoard.Forms
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        this,
+                    this.ShowAppMessageBox(
                         UiTranslate.T(
                             "There was an error loading the saved keyboard definition file:",
                             "載入已儲存的鍵盤定義檔時發生錯誤：",
                             "加载已保存的键盘定义文件时出错：",
                             "保存されたキーボード定義の読み込み中にエラーが発生しました：")
-                        + $"{Environment.NewLine}{ex.Message}");
+                        + $"{Environment.NewLine}{ex.Message}",
+                        UiTranslate.T("Error", "錯誤", "错误", "エラー"),
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                     GlobalSettings.Settings.LoadedCategory = null;
                     GlobalSettings.Settings.LoadedKeyboard = null;
                 }
             }
 
-            // Load a style if possible.
             var savedStyleName = GlobalSettings.Settings.LoadedStyle;
             if (GlobalSettings.CurrentDefinition != null && savedStyleName != null)
             {
@@ -545,8 +497,7 @@ namespace ThoNohT.NohBoard.Forms
                 catch (Exception ex)
                 {
                     GlobalSettings.Settings.LoadedStyle = null;
-                    MessageBox.Show(
-                        this,
+                    this.ShowAppMessageBox(
                         string.Format(
                             UiTranslate.T(
                                 "Failed to load style {0}, loading default style.",
@@ -556,7 +507,9 @@ namespace ThoNohT.NohBoard.Forms
                             savedStyleName)
                         + Environment.NewLine
                         + ex.Message,
-                        UiTranslate.T("Error loading style.", "載入樣式錯誤", "加载样式错误", "スタイル読み込みエラー"));
+                        UiTranslate.T("Error loading style.", "載入樣式錯誤", "加载样式错误", "スタイル読み込みエラー"),
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
 
@@ -568,9 +521,6 @@ namespace ThoNohT.NohBoard.Forms
             this.ApplySettings();
         }
 
-        /// <summary>
-        /// Handles the closing of the form. Hooks are disabled and the settings are saved before closing.
-        /// </summary>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!this._exitingApp && !CrashHandler.Crashed && e.CloseReason == CloseReason.UserClosing)
@@ -598,8 +548,7 @@ namespace ThoNohT.NohBoard.Forms
             {
                 if (!this._exitingFromPeer)
                 {
-                    MessageBox.Show(
-                        this,
+                    this.ShowAppMessageBox(
                         $"無法儲存設定檔：{Environment.NewLine}{ex.Message}",
                         "NohBoard",
                         MessageBoxButtons.OK,
@@ -608,10 +557,7 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// Applies the currently stored settings.
-        /// </summary>
-        private void ApplySettings()
+        internal void ApplySettings()
         {
             HookManager.TrapKeyboard = GlobalSettings.Settings.TrapKeyboard;
             HookManager.TrapMouse = GlobalSettings.Settings.TrapMouse;
@@ -620,7 +566,7 @@ namespace ThoNohT.NohBoard.Forms
             HookManager.PressHold = GlobalSettings.Settings.PressHold;
 
             var title = GlobalSettings.Settings.WindowTitle;
-            this.Text = string.IsNullOrWhiteSpace(title) ? $"NohBoard {Version.Get}" : title;
+            this.Text = string.IsNullOrWhiteSpace(title) ? Version.DefaultTitle : title;
             if (this._trayIcon != null)
                 this._trayIcon.Text = this.Text;
 
@@ -628,9 +574,6 @@ namespace ThoNohT.NohBoard.Forms
             this.ApplyLocalizedMainMenu();
         }
 
-        /// <summary>
-        /// Sets context menu item text from the current UI language in settings.
-        /// </summary>
         private void ApplyLocalizedMainMenu()
         {
             var L = UiTranslate.Lang;
@@ -683,9 +626,6 @@ namespace ThoNohT.NohBoard.Forms
                 : UiTranslate.T(L, "Start &Editing", "開始編輯(&E)", "开始编辑(&E)", "編集を開始(&E)");
         }
 
-        /// <summary>
-        /// Opens the settings form.
-        /// </summary>
         private void mnuSettings_Click(object sender, EventArgs e) => this.OpenSettingsDialog();
 
         private void OpenSettingsDialog()
@@ -700,10 +640,6 @@ namespace ThoNohT.NohBoard.Forms
                 this.ApplySettings();
         }
 
-        /// <summary>
-        /// Populates the main menu. Elements are visible based on which definitions and styles are loaded, and whether
-        /// actions on a specifically pointed element are possible.
-        /// </summary>
         private void MainMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.menuOpen = true;
@@ -724,7 +660,6 @@ namespace ThoNohT.NohBoard.Forms
                 this.elementUnderCursor =
                     GlobalSettings.CurrentDefinition.Elements.FirstOrDefault(x => x.Inside(mousePos));
 
-                // Set the highlighted definition only if we're in edit mode, and there is not an already selected definition.
                 if (this.mnuToggleEditMode.Checked && this.selectedDefinition == null)
                 {
                     this.highlightedDefinition = this.elementUnderCursor;
@@ -736,7 +671,6 @@ namespace ThoNohT.NohBoard.Forms
                 this.mnuElementProperties.Enabled = relevantElement != null;
             }
 
-            // Only allow editing of properties/styles in edit mode.
             this.mnuKeyboardProperties.Visible = this.mnuToggleEditMode.Checked;
             this.mnuUpdateTextPosition.Visible = this.mnuToggleEditMode.Checked;
             this.mnuElementProperties.Visible = this.mnuToggleEditMode.Checked;
@@ -770,14 +704,16 @@ namespace ThoNohT.NohBoard.Forms
                         "新しいバージョンがあります：{0}。"),
                     this.latestVersion.Format());
                 this.mnuUpdate.Visible = true;
-                this.mnuUpdate.Click += (s, ea) => { Process.Start(new ProcessStartInfo { FileName = "https://github.com/ThoNohT/NohBoard/releases", UseShellExecute = true }); };
+                this.mnuUpdate.Click += (s, ea) =>
+                {
+                    Process.Start(new ProcessStartInfo { FileName = Constants.ReleasesUrl, UseShellExecute = true });
+                };
             }
 
             this.mnuMoveElement.Visible = this.relevantDefinition != null;
 
             var highlightedSomething = this.mnuToggleEditMode.Checked && this.relevantDefinition != null;
 
-            // Edit mode related menu items.
             this.mnuAddBoundaryPoint.Visible = highlightedSomething &&
                 this.relevantDefinition.RelevantManipulation.Type == ElementManipulationType.MoveEdge;
 
@@ -788,18 +724,11 @@ namespace ThoNohT.NohBoard.Forms
             this.mnuAddElement.Visible = this.mnuToggleEditMode.Checked && this.relevantDefinition == null;
         }
 
-        /// <summary>
-        /// Handles setting the menu open variable to false when the form loses focus.
-        /// </summary>
         private void MainForm_Deactivate(object sender, EventArgs e)
         {
-            // Deactivating the form also closes the menu.
             this.menuOpen = false;
         }
 
-        /// <summary>
-        /// Exits the application.
-        /// </summary>
         private void mnuExit_Click(object sender, EventArgs e)
         {
             this.ExitApplication();
@@ -809,17 +738,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Rendering
 
-        /// <summary>
-        /// Renders a single element definition.
-        /// </summary>
-        /// <param name="g">The GDI+ surface to render on.</param>
-        /// <param name="def">The element definition to render.</param>
-        /// <param name="allDefs">The list of all element definition.</param>
-        /// <param name="kbKeys">The list of keyboard keys that are pressed.</param>
-        /// <param name="mouseKeys">The list of mouse keys that are pressed.</param>
-        /// <param name="scrollCounts">The list of scroll counts.</param>
-        /// <param name="scrollCounts">If <c>true</c>, the key will always render, regardless of whether it is
-        /// different from the background.</param>
         private void Render(
             Graphics g,
             ElementDefinition def,
@@ -861,18 +779,12 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// Forces an update if any of the key or mouse states have changed.
-        /// </summary>
         private void UpdateTimer_Tick(object sender, EventArgs e)
         {
             if (KeyboardState.Updated || MouseState.Updated)
                 this.InvalidateKeyboardSurface();
         }
 
-        /// <summary>
-        /// Periodically checks that no keys got stuck.
-        /// </summary>
         private void KeyCheckTimer_Tick(object sender, EventArgs e)
         {
             MouseState.CheckKeys(GlobalSettings.Settings.PressHold);
@@ -881,11 +793,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #endregion Rendering
 
-        /// <summary>
-        /// Crashes NohBoard, in order to generate a crash log.
-        /// This seems strange, but can be an easy way for someone to serialize all their settings into a single file
-        /// to be sent for support reasons.
-        /// </summary>
         private void mnuGenerateLog_Click(object sender, EventArgs e)
         {
             if (this.ShowAppMessageBox(

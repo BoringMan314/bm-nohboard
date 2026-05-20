@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -17,25 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace ThoNohT.NohBoard.Extra
 {
-    /// <summary>
-    /// Lists the possible ways of capitalizing the keys that have different texts for captialized displays and
-    /// lowercase displays.
-    /// </summary>
     public enum CapitalizationMethod
     {
-        /// <summary>
-        /// Always show capitalized.
-        /// </summary>
         Capitalize,
 
-        /// <summary>
-        /// Always show in lower-case.
-        /// </summary>
         Lowercase,
 
-        /// <summary>
-        /// Follow the state of the actual keys.
-        /// </summary>
         FollowKeys
     }
 }

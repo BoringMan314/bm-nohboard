@@ -22,27 +22,12 @@ namespace ThoNohT.NohBoard.Forms
     using System.Windows.Forms;
     using ThoNohT.NohBoard.Hooking.Interop;
 
-    /// <summary>
-    /// A font chooser.
-    /// </summary>
     public partial class FontChooser : UserControl
     {
-        /// <summary>
-        /// The selected font.
-        /// </summary>
         private Font font;
 
-        /// <summary>
-        /// The delegate to invoke when the font has been changed.
-        /// </summary>
-        /// <param name="sender">The control that changed the font.</param>
-        /// <param name="font">The new font.</param>
         public delegate void FontChangedEventHandler(FontChooser sender, Font font);
 
-        /// <summary>
-        /// The event that is invoked when the font has been changed. Only invoked when the font is changed through
-        /// the user interface, not when it is changed programmatically.
-        /// </summary>
         public new event FontChangedEventHandler FontChanged;
         
         public FontChooser()
@@ -57,9 +42,6 @@ namespace ThoNohT.NohBoard.Forms
             this.SetStyle(ControlStyles.ResizeRedraw, true);
         }
 
-        /// <summary>
-        /// The selected font.
-        /// </summary>
         public new Font Font
         {
             get { return this.font; }
@@ -72,9 +54,6 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// The text to display.
-        /// </summary>
         public string LabelText
         {
             get { return this.DisplayLabel.Text; }
@@ -89,7 +68,7 @@ namespace ThoNohT.NohBoard.Forms
                 Font = this.Font
             };
 
-            if (HookManager.RunModalUi(() => picker.ShowDialog()) == DialogResult.OK)
+            if (AppModalUi.ShowCommonDialog(picker, this.FindForm()) == DialogResult.OK)
                 this.Font = picker.Font;
 
             this.Refresh();

@@ -2,15 +2,8 @@ namespace ThoNohT.NohBoard.Forms
 {
     partial class ColorChooser
     {
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,17 +15,10 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             this.DisplayLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // DisplayLabel
-            // 
             this.DisplayLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -47,9 +33,6 @@ namespace ThoNohT.NohBoard.Forms
             this.DisplayLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.DisplayLabel.DoubleClick += new System.EventHandler(this.ColorChooser_DoubleClick);
             this.DisplayLabel.Layout += new System.Windows.Forms.LayoutEventHandler(this.DisplayLabel_Layout);
-            // 
-            // ColorChooser
-            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;

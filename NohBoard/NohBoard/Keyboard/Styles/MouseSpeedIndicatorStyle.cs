@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -22,39 +22,22 @@ namespace ThoNohT.NohBoard.Keyboard.Styles
     using System.Runtime.Serialization;
     using Extra;
 
-    /// <summary>
-    /// The style for a mouse speed indicator.
-    /// </summary>
     [DataContract(Name = "MouseSpeedIndicatorStyle", Namespace = "")]
     public class MouseSpeedIndicatorStyle : ElementStyle
     {
         #region Properties
 
-        /// <summary>
-        /// The inner color of the mouse speed indicator. This is also the color as shown when no movement occurs.
-        /// </summary>
         [DataMember]
         public SerializableColor InnerColor { get; set; } = Color.FromArgb(100, 100, 100);
 
-        /// <summary>
-        /// The outer color of the mouse speed indicator. This is the color of the outer edge of the indicator when
-        /// there is maximum movement.
-        /// </summary>
         [DataMember]
         public SerializableColor OuterColor { get; set; } = Color.FromArgb(255, 255, 255);
 
-        /// <summary>
-        /// The width of the outline.
-        /// </summary>
         [DataMember]
         public int OutlineWidth { get; set; } = 1;
 
         #endregion Properties
 
-        /// <summary>
-        /// Returns a clone of this mouse speed indicator style.
-        /// </summary>
-        /// <returns>The cloned mouse speed indicator style.</returns>
         public override ElementStyle Clone()
         {
             return new MouseSpeedIndicatorStyle
@@ -65,11 +48,6 @@ namespace ThoNohT.NohBoard.Keyboard.Styles
             };
         }
 
-        /// <summary>
-        /// Checks whether the style has changes relative to the specified other style.
-        /// </summary>
-        /// <param name="other">The style to compare against.</param>
-        /// <returns>True if the style has changes, false otherwise.</returns>
         public override bool IsChanged(ElementStyle other)
         {
             if (!(other is MouseSpeedIndicatorStyle msis)) return true;

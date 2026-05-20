@@ -21,15 +21,8 @@ namespace ThoNohT.NohBoard.Forms
 
     partial class SaveStyleAsForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             CancelButton2 = new System.Windows.Forms.Button();
@@ -53,9 +42,6 @@ namespace ThoNohT.NohBoard.Forms
             lblName = new System.Windows.Forms.Label();
             chkGlobal = new System.Windows.Forms.CheckBox();
             SuspendLayout();
-            // 
-            // CancelButton2
-            // 
             CancelButton2.Location = new Point(95, 70);
             CancelButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CancelButton2.Name = "CancelButton2";
@@ -63,9 +49,6 @@ namespace ThoNohT.NohBoard.Forms
             CancelButton2.TabIndex = 9;
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
-            // 
-            // SaveButton
-            // 
             SaveButton.Location = new Point(185, 70);
             SaveButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             SaveButton.Name = "SaveButton";
@@ -74,18 +57,12 @@ namespace ThoNohT.NohBoard.Forms
             SaveButton.Text = "Save";
             SaveButton.UseVisualStyleBackColor = true;
             SaveButton.Click += SaveButton_Click;
-            // 
-            // StyleCombo
-            // 
             StyleCombo.FormattingEnabled = true;
             StyleCombo.Location = new Point(85, 10);
             StyleCombo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             StyleCombo.Name = "StyleCombo";
             StyleCombo.Size = new Size(180, 23);
             StyleCombo.TabIndex = 7;
-            // 
-            // lblName
-            // 
             lblName.Location = new Point(10, 10);
             lblName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblName.Name = "lblName";
@@ -93,9 +70,6 @@ namespace ThoNohT.NohBoard.Forms
             lblName.TabIndex = 6;
             lblName.Text = "Name:";
             lblName.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // chkGlobal
-            // 
             chkGlobal.Location = new Point(10, 40);
             chkGlobal.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkGlobal.Name = "chkGlobal";
@@ -104,9 +78,6 @@ namespace ThoNohT.NohBoard.Forms
             chkGlobal.Text = "Save as global style";
             chkGlobal.UseVisualStyleBackColor = true;
             chkGlobal.CheckedChanged += chkGlobal_CheckedChanged;
-            // 
-            // SaveStyleAsForm
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CancelButton2;

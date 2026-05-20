@@ -21,37 +21,25 @@ namespace ThoNohT.NohBoard.Controls
     using System.Drawing;
     using System.Windows.Forms;
     using ThoNohT.NohBoard.Extra;
+    using ThoNohT.NohBoard.Forms;
     using ThoNohT.NohBoard.Hooking.Interop;
 
-    /// <summary>
-    /// A font chooser.
-    /// </summary>
     public partial class FontChooser : UserControl
     {
         #region Fields
 
-        /// <summary>
-        /// The selected font.
-        /// </summary>
         private Font font;
 
         #endregion Fields
 
         #region Events
 
-        /// <summary>
-        /// The event that is invoked when the font has been changed. Only invoked when the font is changed through
-        /// the user interface, not when it is changed programmatically.
-        /// </summary>
         public new event Action<FontChooser, Font, string> FontChanged;
 
         #endregion Events
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FontChooser" /> class.
-        /// </summary>
         public FontChooser()
         {
             this.InitializeComponent();
@@ -68,9 +56,6 @@ namespace ThoNohT.NohBoard.Controls
 
         #region Properties
 
-        /// <summary>
-        /// The selected font.
-        /// </summary>
         public new Font Font
         {
             get { return this.font; }
@@ -82,18 +67,12 @@ namespace ThoNohT.NohBoard.Controls
             }
         }
 
-        /// <summary>
-        /// The text to display.
-        /// </summary>
         public string LabelText
         {
             get { return this.DisplayLabel.Text; }
             set { this.DisplayLabel.Text = value; }
         }
 
-        /// <summary>
-        /// The link to download the font.
-        /// </summary>
         public string Link
         {
             get { return string.IsNullOrWhiteSpace(this.txtLink.Text) ? null : this.txtLink.Text; }
@@ -104,18 +83,12 @@ namespace ThoNohT.NohBoard.Controls
 
         #region Methods
 
-        /// <inheritdoc />
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
             this.LayoutFontPreviewRow();
         }
 
-        /// <summary>
-        /// Handles a double click event. Shows a font dialog to set the new font.
-        /// </summary>
-        /// <param name="sender">The control that sent the event.</param>
-        /// <param name="e">The event arguments.</param>
         private void FontChooser_DoubleClick(object sender, EventArgs e)
         {
             var picker = new FontDialog
@@ -124,7 +97,7 @@ namespace ThoNohT.NohBoard.Controls
                 Font = this.Font,
             };
 
-            if (HookManager.RunModalUi(() => picker.ShowDialog()) == DialogResult.OK)
+            if (AppModalUi.ShowCommonDialog(picker, this.FindForm()) == DialogResult.OK)
                 this.Font = picker.Font;
 
             this.Refresh();
@@ -132,17 +105,11 @@ namespace ThoNohT.NohBoard.Controls
             this.FontChanged?.Invoke(this, picker.Font, this.Link);
         }
 
-        /// <summary>
-        /// Handles changing the link text. Updates the DownloadLink of the font.
-        /// </summary>
         private void txtLink_TextChanged(object sender, EventArgs e)
         {
             this.FontChanged?.Invoke(this, this.Font, this.Link);
         }
 
-        /// <summary>
-        /// Keeps the preview row aligned like <see cref="ColorChooser"/> (compact row → 27px gutter).
-        /// </summary>
         private void LayoutFontPreviewRow()
         {
             const int gutter = 27;
@@ -150,9 +117,6 @@ namespace ThoNohT.NohBoard.Controls
             this.DisplayLabel.Width = Math.Max(0, this.Width - gutter);
         }
 
-        /// <summary>
-        /// Handles layout for the font preview label width when the control is resized.
-        /// </summary>
         private void DisplayLabel_Layout(object sender, LayoutEventArgs e)
         {
             this.LayoutFontPreviewRow();

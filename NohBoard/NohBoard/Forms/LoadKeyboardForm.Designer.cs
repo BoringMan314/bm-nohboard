@@ -21,15 +21,8 @@ namespace ThoNohT.NohBoard.Forms
 
     partial class LoadKeyboardForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
@@ -67,9 +56,6 @@ namespace ThoNohT.NohBoard.Forms
             fontsGridPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)fontsGrid).BeginInit();
             SuspendLayout();
-            // 
-            // lblCategory
-            // 
             lblCategory.Location = new Point(10, 10);
             lblCategory.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lblCategory.Name = "lblCategory";
@@ -77,9 +63,6 @@ namespace ThoNohT.NohBoard.Forms
             lblCategory.TabIndex = 0;
             lblCategory.Text = "Category:";
             lblCategory.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblKeyboardDefinition
-            // 
             lblKeyboardDefinition.Location = new Point(10, 65);
             lblKeyboardDefinition.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lblKeyboardDefinition.Name = "lblKeyboardDefinition";
@@ -87,9 +70,6 @@ namespace ThoNohT.NohBoard.Forms
             lblKeyboardDefinition.TabIndex = 1;
             lblKeyboardDefinition.Text = "Keyboard Definition:";
             lblKeyboardDefinition.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // CategoryCombo
-            // 
             CategoryCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             CategoryCombo.FormattingEnabled = true;
             CategoryCombo.Location = new Point(10, 35);
@@ -98,9 +78,6 @@ namespace ThoNohT.NohBoard.Forms
             CategoryCombo.Size = new Size(180, 23);
             CategoryCombo.TabIndex = 2;
             CategoryCombo.SelectedIndexChanged += CategoryCombo_SelectedIndexChanged;
-            // 
-            // DefinitionsList
-            // 
             DefinitionsList.ContextMenuStrip = DefinitionListMenu;
             DefinitionsList.FormattingEnabled = true;
             DefinitionsList.IntegralHeight = false;
@@ -111,22 +88,21 @@ namespace ThoNohT.NohBoard.Forms
             DefinitionsList.Size = new Size(180, 200);
             DefinitionsList.TabIndex = 3;
             DefinitionsList.SelectedIndexChanged += DefinitionsList_SelectedIndexChanged;
-            // 
-            // DefinitionListMenu
-            // 
             DefinitionListMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { mnuDeleteDefinition });
             DefinitionListMenu.Name = "DefinitionListMenu";
             DefinitionListMenu.Size = new Size(112, 26);
-            // 
-            // mnuDeleteDefinition
-            // 
             mnuDeleteDefinition.Name = "mnuDeleteDefinition";
             mnuDeleteDefinition.Size = new Size(111, 22);
             mnuDeleteDefinition.Text = "Delete";
             mnuDeleteDefinition.Click += mnuDeleteDefinition_Click;
-            // 
-            // lblKeyboardStyle
-            // 
+            LoadLegacyButton.Location = new Point(195, 35);
+            LoadLegacyButton.Margin = new System.Windows.Forms.Padding(5);
+            LoadLegacyButton.Name = "LoadLegacyButton";
+            LoadLegacyButton.Size = new Size(180, 23);
+            LoadLegacyButton.TabIndex = 8;
+            LoadLegacyButton.Text = "Load Legacy kb file...";
+            LoadLegacyButton.UseVisualStyleBackColor = true;
+            LoadLegacyButton.Click += LoadLegacyButton_Click;
             lblKeyboardStyle.Location = new Point(195, 65);
             lblKeyboardStyle.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lblKeyboardStyle.Name = "lblKeyboardStyle";
@@ -134,9 +110,6 @@ namespace ThoNohT.NohBoard.Forms
             lblKeyboardStyle.TabIndex = 4;
             lblKeyboardStyle.Text = "Keyboard Style:";
             lblKeyboardStyle.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // StyleList
-            // 
             StyleList.FormattingEnabled = true;
             StyleList.IntegralHeight = false;
             StyleList.ItemHeight = 15;
@@ -146,20 +119,6 @@ namespace ThoNohT.NohBoard.Forms
             StyleList.Size = new Size(180, 200);
             StyleList.TabIndex = 5;
             StyleList.SelectedIndexChanged += StyleList_SelectedIndexChanged;
-            // 
-            // LoadLegacyButton
-            // 
-            LoadLegacyButton.Location = new Point(195, 35);
-            LoadLegacyButton.Margin = new System.Windows.Forms.Padding(5);
-            LoadLegacyButton.Name = "LoadLegacyButton";
-            LoadLegacyButton.Size = new Size(180, 23);
-            LoadLegacyButton.TabIndex = 8;
-            LoadLegacyButton.Text = "Load Legacy kb file...";
-            LoadLegacyButton.UseVisualStyleBackColor = true;
-            LoadLegacyButton.Click += LoadLegacyButton_Click;
-            // 
-            // CloseButton
-            // 
             CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             CloseButton.Location = new Point(295, 295);
             CloseButton.Margin = new System.Windows.Forms.Padding(5);
@@ -169,9 +128,6 @@ namespace ThoNohT.NohBoard.Forms
             CloseButton.Text = "Close";
             CloseButton.UseVisualStyleBackColor = true;
             CloseButton.Click += CloseButton_Click;
-            // 
-            // lblMissingFonts
-            // 
             lblMissingFonts.Location = new Point(380, 10);
             lblMissingFonts.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lblMissingFonts.Name = "lblMissingFonts";
@@ -179,9 +135,6 @@ namespace ThoNohT.NohBoard.Forms
             lblMissingFonts.TabIndex = 10;
             lblMissingFonts.Text = "The following fonts are defined in the chosen style but not present on this system.\r\nIf a link is provided, you may download it by double clicking the link:";
             lblMissingFonts.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // fontsGridPanel
-            // 
             fontsGridPanel.BackColor = SystemColors.Window;
             fontsGridPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             fontsGridPanel.Controls.Add(fontsGrid);
@@ -191,9 +144,6 @@ namespace ThoNohT.NohBoard.Forms
             fontsGridPanel.Padding = new System.Windows.Forms.Padding(5);
             fontsGridPanel.Size = new Size(600, 245);
             fontsGridPanel.TabIndex = 14;
-            // 
-            // fontsGrid
-            // 
             fontsGrid.AllowUserToAddRows = false;
             fontsGrid.AllowUserToDeleteRows = false;
             fontsGrid.AllowUserToResizeRows = false;
@@ -215,9 +165,6 @@ namespace ThoNohT.NohBoard.Forms
             fontsGrid.Size = new Size(588, 233);
             fontsGrid.TabIndex = 11;
             fontsGrid.CellDoubleClick += fontsGrid_CellDoubleClick;
-            // 
-            // lblRestart
-            // 
             lblRestart.Location = new Point(380, 295);
             lblRestart.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lblRestart.Name = "lblRestart";
@@ -225,9 +172,6 @@ namespace ThoNohT.NohBoard.Forms
             lblRestart.TabIndex = 12;
             lblRestart.Text = "After a new font has been installed, NohBoard needs to be restarted to recognize it.";
             lblRestart.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // btnRestart
-            // 
             btnRestart.Enabled = false;
             btnRestart.Location = new Point(900, 295);
             btnRestart.Margin = new System.Windows.Forms.Padding(5);
@@ -237,9 +181,6 @@ namespace ThoNohT.NohBoard.Forms
             btnRestart.Text = "Restart";
             btnRestart.UseVisualStyleBackColor = true;
             btnRestart.Click += btnRestart_Click;
-            // 
-            // LoadKeyboardForm
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CloseButton;

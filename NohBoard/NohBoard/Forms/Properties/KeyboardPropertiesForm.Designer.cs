@@ -19,15 +19,8 @@ namespace ThoNohT.NohBoard.Forms.Properties
 {
     partial class KeyboardPropertiesForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (this.components != null))
@@ -39,10 +32,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             CancelButton2 = new System.Windows.Forms.Button();
@@ -50,9 +39,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblSize = new System.Windows.Forms.Label();
             txtSize = new ThoNohT.NohBoard.Controls.VectorTextBox();
             SuspendLayout();
-            // 
-            // CancelButton2
-            // 
             CancelButton2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             CancelButton2.Location = new System.Drawing.Point(90, 40);
             CancelButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -62,9 +48,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
             CancelButton2.Click += CancelButton2_Click;
-            // 
-            // AcceptButton2
-            // 
             AcceptButton2.Location = new System.Drawing.Point(175, 40);
             AcceptButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             AcceptButton2.Name = "AcceptButton2";
@@ -73,9 +56,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             AcceptButton2.Text = "Accept";
             AcceptButton2.UseVisualStyleBackColor = true;
             AcceptButton2.Click += AcceptButton2_Click;
-            // 
-            // lblSize
-            // 
             lblSize.Location = new System.Drawing.Point(10, 10);
             lblSize.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblSize.Name = "lblSize";
@@ -83,9 +63,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblSize.TabIndex = 14;
             lblSize.Text = "Size:";
             lblSize.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtSize
-            // 
             txtSize.Location = new System.Drawing.Point(75, 10);
             txtSize.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtSize.MaxVal = int.MaxValue;
@@ -97,9 +74,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             txtSize.Text = "0 ; 0";
             txtSize.X = 0;
             txtSize.Y = 0;
-            // 
-            // KeyboardPropertiesForm
-            // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CancelButton2;

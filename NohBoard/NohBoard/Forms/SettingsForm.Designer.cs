@@ -22,15 +22,8 @@ namespace ThoNohT.NohBoard.Forms
 
     partial class SettingsForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -42,10 +35,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             TrapGroup = new GroupBox();
@@ -73,6 +62,7 @@ namespace ThoNohT.NohBoard.Forms
             lblScrollHold = new Label();
             lblMouseSensititivy = new Label();
             OkButton = new Button();
+            ApplyButton = new Button();
             CancelButton2 = new Button();
             btnResetSettings = new Button();
             CapitalizationGroup = new GroupBox();
@@ -243,7 +233,6 @@ namespace ThoNohT.NohBoard.Forms
             udOverlayTransparency.Name = "udOverlayTransparency";
             udOverlayTransparency.Size = new Size(50, 23);
             udOverlayTransparency.TabIndex = 7;
-            udOverlayTransparency.Value = new decimal(new int[] { 0, 0, 0, 0 });
             // 
             // lblOverlayTransparencyPercent
             // 
@@ -263,7 +252,7 @@ namespace ThoNohT.NohBoard.Forms
             btnCycleLanguage.Size = new Size(80, 23);
             btnCycleLanguage.TabIndex = 0;
             btnCycleLanguage.TabStop = false;
-            btnCycleLanguage.Text = "English";
+            btnCycleLanguage.Text = "繁體中文";
             btnCycleLanguage.UseVisualStyleBackColor = true;
             btnCycleLanguage.Click += btnCycleLanguage_Click;
             // 
@@ -373,32 +362,41 @@ namespace ThoNohT.NohBoard.Forms
             OkButton.Margin = new Padding(4, 3, 4, 3);
             OkButton.Name = "OkButton";
             OkButton.Size = new Size(80, 23);
-            OkButton.TabIndex = 7;
-            OkButton.TabStop = false;
+            OkButton.TabIndex = 8;
             OkButton.Text = "Ok";
             OkButton.UseVisualStyleBackColor = true;
             OkButton.Click += OkButton_Click;
             // 
+            // ApplyButton
+            // 
+            ApplyButton.Location = new Point(320, 400);
+            ApplyButton.Margin = new Padding(4, 3, 4, 3);
+            ApplyButton.Name = "ApplyButton";
+            ApplyButton.Size = new Size(80, 23);
+            ApplyButton.TabIndex = 7;
+            ApplyButton.TabStop = false;
+            ApplyButton.Text = "Apply";
+            ApplyButton.UseVisualStyleBackColor = true;
+            ApplyButton.Click += ApplyButton_Click;
+            // 
             // CancelButton2
             // 
             CancelButton2.DialogResult = DialogResult.Cancel;
-            CancelButton2.Location = new Point(320, 400);
+            CancelButton2.Location = new Point(235, 400);
             CancelButton2.Margin = new Padding(4, 3, 4, 3);
             CancelButton2.Name = "CancelButton2";
             CancelButton2.Size = new Size(80, 23);
             CancelButton2.TabIndex = 6;
-            CancelButton2.TabStop = false;
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
             // 
             // btnResetSettings
             // 
-            btnResetSettings.Location = new Point(195, 400);
+            btnResetSettings.Location = new Point(10, 400);
             btnResetSettings.Margin = new Padding(4, 3, 4, 3);
             btnResetSettings.Name = "btnResetSettings";
             btnResetSettings.Size = new Size(120, 23);
             btnResetSettings.TabIndex = 5;
-            btnResetSettings.TabStop = false;
             btnResetSettings.Text = "Reset settings";
             btnResetSettings.UseVisualStyleBackColor = true;
             btnResetSettings.Click += btnResetSettings_Click;
@@ -530,6 +528,7 @@ namespace ThoNohT.NohBoard.Forms
             Controls.Add(TrapGroup);
             Controls.Add(btnResetSettings);
             Controls.Add(CancelButton2);
+            Controls.Add(ApplyButton);
             Controls.Add(OkButton);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4, 3, 4, 3);
@@ -562,6 +561,7 @@ namespace ThoNohT.NohBoard.Forms
         private System.Windows.Forms.Label lblMouseSensititivy;
         private System.Windows.Forms.Label lblScrollHold;
         private System.Windows.Forms.Button OkButton;
+        private System.Windows.Forms.Button ApplyButton;
         private System.Windows.Forms.Button CancelButton2;
         private System.Windows.Forms.Button btnResetSettings;
         internal System.Windows.Forms.CheckBox chkTrapMouse;

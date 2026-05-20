@@ -17,10 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace ThoNohT.NohBoard.Extra
 {
-    /// <summary>
-    /// UI language codes stored in <c>NohBoard.json</c> as <see cref="GlobalSettings.UiLanguage"/> —
-    /// canonical forms only: <c>en_US</c>, <c>zh_TW</c>, <c>zh_CN</c>, <c>ja_JP</c> (see <see cref="Normalize"/> for legacy hyphen input).
-    /// </summary>
     public static class UiLanguageCode
     {
         public const string EnUs = "en_US";
@@ -28,14 +24,10 @@ namespace ThoNohT.NohBoard.Extra
         public const string ZhTw = "zh_TW";
         public const string ZhCn = "zh_CN";
 
-        /// <summary>
-        /// Returns a canonical code (<see cref="EnUs"/>, <see cref="ZhTw"/>, <see cref="ZhCn"/>, <see cref="JaJp"/>);
-        /// hyphen forms (e.g. <c>en-US</c>) map to underscore; unknown or empty becomes <see cref="EnUs"/>.
-        /// </summary>
         public static string Normalize(string value)
         {
             if (string.IsNullOrEmpty(value))
-                return EnUs;
+                return ZhTw;
 
             var v = value.Trim().Replace('-', '_');
             return v.ToUpperInvariant() switch
@@ -44,7 +36,7 @@ namespace ThoNohT.NohBoard.Extra
                 "JA_JP" => JaJp,
                 "ZH_TW" => ZhTw,
                 "ZH_CN" => ZhCn,
-                _ => EnUs,
+                _ => ZhTw,
             };
         }
     }

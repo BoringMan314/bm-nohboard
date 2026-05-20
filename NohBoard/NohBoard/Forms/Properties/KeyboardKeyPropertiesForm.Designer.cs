@@ -21,15 +21,8 @@ namespace ThoNohT.NohBoard.Forms.Properties
 
     partial class KeyboardKeyPropertiesForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (this.components != null))
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             btnBoundaryDown = new System.Windows.Forms.Button();
@@ -74,9 +63,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             txtTextPosition = new ThoNohT.NohBoard.Controls.VectorTextBox();
             ((System.ComponentModel.ISupportInitialize)udKeyCode).BeginInit();
             SuspendLayout();
-            // 
-            // btnBoundaryDown
-            // 
             btnBoundaryDown.Location = new Point(10, 270);
             btnBoundaryDown.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnBoundaryDown.Name = "btnBoundaryDown";
@@ -85,9 +71,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnBoundaryDown.Text = "Down";
             btnBoundaryDown.UseVisualStyleBackColor = true;
             btnBoundaryDown.Click += btnBoundaryDown_Click;
-            // 
-            // btnBoundaryUp
-            // 
             btnBoundaryUp.Location = new Point(10, 245);
             btnBoundaryUp.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnBoundaryUp.Name = "btnBoundaryUp";
@@ -96,9 +79,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnBoundaryUp.Text = "Up";
             btnBoundaryUp.UseVisualStyleBackColor = true;
             btnBoundaryUp.Click += btnBoundaryUp_Click;
-            // 
-            // btnRemoveBoundary
-            // 
             btnRemoveBoundary.Location = new Point(10, 195);
             btnRemoveBoundary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnRemoveBoundary.Name = "btnRemoveBoundary";
@@ -107,9 +87,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnRemoveBoundary.Text = "Remove";
             btnRemoveBoundary.UseVisualStyleBackColor = true;
             btnRemoveBoundary.Click += btnRemoveBoundary_Click;
-            // 
-            // btnAddBoundary
-            // 
             btnAddBoundary.Location = new Point(10, 130);
             btnAddBoundary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnAddBoundary.Name = "btnAddBoundary";
@@ -118,9 +95,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnAddBoundary.Text = "Add";
             btnAddBoundary.UseVisualStyleBackColor = true;
             btnAddBoundary.Click += btnAddBoundary_Click;
-            // 
-            // CancelButton2
-            // 
             CancelButton2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             CancelButton2.Location = new Point(390, 305);
             CancelButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -130,9 +104,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
             CancelButton2.Click += CancelButton2_Click;
-            // 
-            // AcceptButton2
-            // 
             AcceptButton2.Location = new Point(475, 305);
             AcceptButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             AcceptButton2.Name = "AcceptButton2";
@@ -141,9 +112,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             AcceptButton2.Text = "Accept";
             AcceptButton2.UseVisualStyleBackColor = true;
             AcceptButton2.Click += AcceptButton2_Click;
-            // 
-            // lblBoundaries
-            // 
             lblBoundaries.Location = new Point(10, 100);
             lblBoundaries.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblBoundaries.Name = "lblBoundaries";
@@ -151,9 +119,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblBoundaries.TabIndex = 36;
             lblBoundaries.Text = "Boundaries:";
             lblBoundaries.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lstBoundaries
-            // 
             lstBoundaries.FormattingEnabled = true;
             lstBoundaries.IntegralHeight = false;
             lstBoundaries.ItemHeight = 15;
@@ -162,9 +127,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lstBoundaries.Name = "lstBoundaries";
             lstBoundaries.Size = new Size(180, 200);
             lstBoundaries.TabIndex = 12;
-            // 
-            // lblText
-            // 
             lblText.Location = new Point(10, 10);
             lblText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblText.Name = "lblText";
@@ -172,17 +134,11 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblText.TabIndex = 34;
             lblText.Text = "Text:";
             lblText.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // txtText
-            // 
             txtText.Location = new Point(95, 10);
             txtText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtText.Name = "txtText";
             txtText.Size = new Size(180, 23);
             txtText.TabIndex = 0;
-            // 
-            // lblTextPosition
-            // 
             lblTextPosition.Location = new Point(10, 70);
             lblTextPosition.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblTextPosition.Name = "lblTextPosition";
@@ -190,9 +146,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblTextPosition.TabIndex = 31;
             lblTextPosition.Text = "Text Position:";
             lblTextPosition.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblShiftText
-            // 
             lblShiftText.Location = new Point(10, 40);
             lblShiftText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblShiftText.Name = "lblShiftText";
@@ -200,17 +153,11 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblShiftText.TabIndex = 45;
             lblShiftText.Text = "Shift Text:";
             lblShiftText.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // txtShiftText
-            // 
             txtShiftText.Location = new Point(95, 40);
             txtShiftText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtShiftText.Name = "txtShiftText";
             txtShiftText.Size = new Size(180, 23);
             txtShiftText.TabIndex = 2;
-            // 
-            // lstKeyCodes
-            // 
             lstKeyCodes.FormattingEnabled = true;
             lstKeyCodes.IntegralHeight = false;
             lstKeyCodes.ItemHeight = 15;
@@ -219,9 +166,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lstKeyCodes.Name = "lstKeyCodes";
             lstKeyCodes.Size = new Size(180, 230);
             lstKeyCodes.TabIndex = 17;
-            // 
-            // btnRemoveKeyCode
-            // 
             btnRemoveKeyCode.Location = new Point(286, 100);
             btnRemoveKeyCode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnRemoveKeyCode.Name = "btnRemoveKeyCode";
@@ -230,9 +174,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnRemoveKeyCode.Text = "Remove";
             btnRemoveKeyCode.UseVisualStyleBackColor = true;
             btnRemoveKeyCode.Click += btnRemoveKeyCode_Click;
-            // 
-            // btnAddKeyCode
-            // 
             btnAddKeyCode.Location = new Point(286, 70);
             btnAddKeyCode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnAddKeyCode.Name = "btnAddKeyCode";
@@ -241,9 +182,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnAddKeyCode.Text = "Add";
             btnAddKeyCode.UseVisualStyleBackColor = true;
             btnAddKeyCode.Click += btnAddKeyCode_Click;
-            // 
-            // udKeyCode
-            // 
             udKeyCode.Location = new Point(375, 40);
             udKeyCode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             udKeyCode.Maximum = new decimal(new int[] { 1028, 0, 0, 0 });
@@ -252,9 +190,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             udKeyCode.Size = new Size(180, 23);
             udKeyCode.TabIndex = 13;
             udKeyCode.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
-            // lblKeyCodes
-            // 
             lblKeyCodes.Location = new Point(290, 40);
             lblKeyCodes.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblKeyCodes.Name = "lblKeyCodes";
@@ -262,9 +197,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblKeyCodes.TabIndex = 51;
             lblKeyCodes.Text = "Key codes:";
             lblKeyCodes.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // chkChangeOnCaps
-            // 
             chkChangeOnCaps.Location = new Point(290, 10);
             chkChangeOnCaps.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkChangeOnCaps.Name = "chkChangeOnCaps";
@@ -272,9 +204,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             chkChangeOnCaps.TabIndex = 1;
             chkChangeOnCaps.Text = "Change capitalization on Caps Lock key";
             chkChangeOnCaps.UseVisualStyleBackColor = true;
-            // 
-            // btnUpdateBoundary
-            // 
             btnUpdateBoundary.Location = new Point(10, 170);
             btnUpdateBoundary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnUpdateBoundary.Name = "btnUpdateBoundary";
@@ -283,9 +212,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnUpdateBoundary.Text = "Update";
             btnUpdateBoundary.UseVisualStyleBackColor = true;
             btnUpdateBoundary.Click += btnUpdateBoundary_Click;
-            // 
-            // btnCenterText
-            // 
             btnCenterText.Location = new Point(195, 70);
             btnCenterText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnCenterText.Name = "btnCenterText";
@@ -294,9 +220,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnCenterText.Text = "Center";
             btnCenterText.UseVisualStyleBackColor = true;
             btnCenterText.Click += btnCenterText_Click;
-            // 
-            // btnRectangle
-            // 
             btnRectangle.Location = new Point(10, 305);
             btnRectangle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnRectangle.Name = "btnRectangle";
@@ -305,9 +228,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnRectangle.Text = "Rectangle";
             btnRectangle.UseVisualStyleBackColor = true;
             btnRectangle.Click += btnRectangle_Click;
-            // 
-            // btnDetectKeyCode
-            // 
             btnDetectKeyCode.Location = new Point(286, 130);
             btnDetectKeyCode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnDetectKeyCode.Name = "btnDetectKeyCode";
@@ -316,9 +236,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnDetectKeyCode.Text = "Detect";
             btnDetectKeyCode.UseVisualStyleBackColor = true;
             btnDetectKeyCode.Click += btnDetectKeyCode_Click;
-            // 
-            // txtBoundaries
-            // 
             txtBoundaries.Location = new Point(95, 100);
             txtBoundaries.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtBoundaries.MaxVal = int.MaxValue;
@@ -330,9 +247,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             txtBoundaries.Text = "0 ; 0";
             txtBoundaries.X = 0;
             txtBoundaries.Y = 0;
-            // 
-            // txtTextPosition
-            // 
             txtTextPosition.Location = new Point(95, 70);
             txtTextPosition.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtTextPosition.MaxVal = int.MaxValue;
@@ -344,9 +258,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             txtTextPosition.Text = "0 ; 0";
             txtTextPosition.X = 0;
             txtTextPosition.Y = 0;
-            // 
-            // KeyboardKeyPropertiesForm
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CancelButton2;

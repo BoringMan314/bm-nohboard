@@ -26,22 +26,9 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
     using Extra;
     using Styles;
 
-    /// <summary>
-    /// Represents a key in a keyboard or on a mouse.
-    /// </summary>
     [DataContract(Name = "MouseScroll", Namespace = "")]
     public class MouseScrollDefinition : KeyDefinition
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MouseScrollDefinition" /> class.
-        /// </summary>
-        /// <param name="id">The identifier of the key.</param>
-        /// <param name="boundaries">The boundaries.</param>
-        /// <param name="keyCode">The keycode.</param>
-        /// <param name="text">The text of the key.</param>
-        /// <param name="textPosition">The new text position.
-        /// If not provided, the new position will be recalculated from the bounding box of the key.</param>
-        /// <param name="manipulation">The current manipulation.</param>
         public MouseScrollDefinition(
             int id,
             List<TPoint> boundaries,
@@ -53,11 +40,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
         {
         }
 
-        /// <summary>
-        /// Renders the key in the specified surface.
-        /// </summary>
-        /// <param name="g">The GDI+ surface to render on.</param>
-        /// <param name="scrollCount">The number of times the direction has been scrolled within the timeout.</param>
         public void Render(Graphics g, int scrollCount)
         {
             var pressed = scrollCount > 0;
@@ -74,16 +56,13 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.TextPosition.X - (int)(txtSize.Width / 2),
                 this.TextPosition.Y - (int)(txtSize.Height / 2));
 
-            // Draw the background
             var backgroundBrush = this.GetBackgroundBrush(subStyle, pressed);
             g.FillPolygon(backgroundBrush, this.Boundaries.ConvertAll<Point>(x => x).ToArray());
 
-            // Draw the text
             g.SetClip(this.GetBoundingBox());
             g.DrawString(text, subStyle.Font, new SolidBrush(subStyle.Text), (Point)txtPoint);
             g.ResetClip();
 
-            // Draw the outline.
             if (subStyle.ShowOutline)
             {
                 using var outlinePen = OverlayTransparency.CreateOutlinePen(
@@ -96,12 +75,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
         #region Transformations
 
-        /// <summary>
-        /// Translates the element, moving it the specified distance.
-        /// </summary>
-        /// <param name="dx">The distance along the x-axis.</param>
-        /// <param name="dy">The distance along the y-axis.</param>
-        /// <returns>A new <see cref="ElementDefinition"/> that is translated.</returns>
         public override ElementDefinition Translate(int dx, int dy)
         {
             return new MouseScrollDefinition(
@@ -113,12 +86,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Renders a simple representation of the element while it is being edited. This representation does not depend
-        /// on the state of the program and is merely intended to provide a clear overview of the current position and
-        /// shape of the element.
-        /// </summary>
-        /// <param name="g">The graphics context to render to.</param>
         public override void RenderEditing(Graphics g)
         {
             base.RenderEditing(g);
@@ -138,12 +105,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
             g.ResetClip();
         }
 
-        /// <summary>
-        /// Moves a boundary point by the specified distance.
-        /// </summary>
-        /// <param name="index">The index of the boundary point in <see cref="KeyDefinition.Boundaries"/>.</param>
-        /// <param name="diff">The distance to move the boundary point.</param>
-        /// <returns>A new key definition with the moved boundary.</returns>
         protected override KeyDefinition MoveBoundary(int index, Size diff)
         {
             if (index < 0 || index >= this.Boundaries.Count)
@@ -158,11 +119,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Moves the text inside the key by the specified ditsance.
-        /// </summary>
-        /// <param name="diff">The distance to move the text.</param>
-        /// <returns>A new key definition with the moved text.</returns>
         protected override KeyDefinition MoveText(Size diff)
         {
             return new MouseScrollDefinition(
@@ -174,13 +130,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Moves an edge by the specified distance.
-        /// </summary>
-        /// <param name="index">The index of the edge as specified by the first of the two boundaries defining it in
-        /// <see cref="KeyDefinition.Boundaries"/>.</param>
-        /// <param name="diff">The distance to move the edge.</param>
-        /// <returns>A new key definition with the moved edge.</returns>
         protected override KeyDefinition MoveEdge(int index, Size diff)
         {
             if (index < 0 || index >= this.Boundaries.Count)
@@ -188,7 +137,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
             Func<int, bool> doUpdate = i => i == index || i == (index + 1) % this.Boundaries.Count;
 
-            // Project the mouse movement onto the orthogonal vector.
             var edgeBoundaries = this.Boundaries.Where((b, i) => doUpdate(i)).ToList();
             var edgeVector = (SizeF)(edgeBoundaries[1] - edgeBoundaries[0]);
             var othogonalVector = edgeVector.RotateDegrees(90);
@@ -203,10 +151,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Removes the highlighted boundary.
-        /// </summary>
-        /// <returns>The new version of this key definition with the boundary removed.</returns>
         public override KeyDefinition RemoveBoundary()
         {
             if (this.RelevantManipulation == null) return this;
@@ -225,11 +169,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Adds a boundary on the edge that is highlighted.
-        /// </summary>
-        /// <param name="location">To location to add the point at.</param>
-        /// <returns>The new version of this key definition with the boundary added.</returns>
         public override KeyDefinition AddBoundary(TPoint location)
         {
             if (this.CurrentManipulation == null) return this;
@@ -248,24 +187,11 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.CurrentManipulation);
         }
 
-        /// <summary>
-        /// Updates the key definition to occupy a region of itself plus the specified other keys.
-        /// </summary>
-        /// <param name="keys">The keys to union with.</param>
-        /// <returns>A new key definition with the updated region.</returns>
         public override KeyDefinition UnionWith(List<KeyDefinition> keys)
         {
             return this.UnionWith(keys.ConvertAll(x => (MouseScrollDefinition)x));
         }
 
-        /// <summary>
-        /// Returns a new version of this element definition with the specified properties changed.
-        /// </summary>
-        /// <param name="boundaries">The new boundaries, or <c>null</c> if not changed.</param>
-        /// <param name="keyCode">The new key code, or <c>null</c> if not changed.</param>
-        /// <param name="text">The new text, or <c>null</c> if not changed.</param>
-        /// <param name="textPosition">The new text position, or <c>null</c> if not changed.</param>
-        /// <returns>The new element definition.</returns>
         public override KeyDefinition ModifyMouse(List<TPoint> boundaries = null, int? keyCode = null, string text = null, TPoint textPosition = null)
         {
             return new MouseScrollDefinition(
@@ -281,11 +207,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
         #region Private methods
 
-        /// <summary>
-        /// Updates the key definition to occupy a region of itself plus the specified other keys.
-        /// </summary>
-        /// <param name="keys">The keys to union with.</param>
-        /// <returns>A new key definition with the updated region.</returns>
         private MouseScrollDefinition UnionWith(IList<MouseScrollDefinition> keys)
         {
             var newBoundaries = this.Boundaries.Select(b => new TPoint(b.X, b.Y)).ToList();
@@ -307,10 +228,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
             return new MouseScrollDefinition(this.Id, newBoundaries, this.KeyCodes.Single(), this.Text);
         }
 
-        /// <summary>
-        /// Returns a clone of this element definition.
-        /// </summary>
-        /// <returns>The cloned element definition.</returns>
         public override ElementDefinition Clone()
         {
             return new MouseScrollDefinition(
@@ -321,11 +238,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
                 this.TextPosition,
                 this.CurrentManipulation);
         }
-        /// <summary>
-        /// Checks whether the definition has changes relative to the specified other definition.
-        /// </summary>
-        /// <param name="other">The definition to compare against.</param>
-        /// <returns>True if the definition has changes, false otherwise.</returns>
         public override bool IsChanged(ElementDefinition other)
         {
             if (!(other is MouseScrollDefinition msd)) return true;
@@ -336,7 +248,6 @@ namespace ThoNohT.NohBoard.Keyboard.ElementDefinitions
 
             if (this.Boundaries.Count != msd.Boundaries.Count) return true;
 
-            // Boundary order change is also a change. So loop through them all.
             for (var i = 0; i < this.Boundaries.Count; i++)
             {
                 if (this.Boundaries[i].IsChanged(msd.Boundaries[i])) return true;

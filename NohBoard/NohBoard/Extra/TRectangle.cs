@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Marius Becker <marius.becker.8@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -20,16 +20,10 @@ namespace ThoNohT.NohBoard.Extra
     using System;
     using System.Drawing;
 
-    /// <summary>
-    /// Represents a rectangle, defined by 4 integer values.
-    /// </summary>
     public class TRectangle
     {
         #region Constructors
 
-        /// <summary>
-        /// Creates a new <see cref="TRectangle" /> instance from its left, top, right and bottom edges.
-        /// </summary>
         public TRectangle(int left, int top, int right, int bottom)
         {
             this.Left = left;
@@ -38,9 +32,6 @@ namespace ThoNohT.NohBoard.Extra
             this.Bottom = bottom;
         }
 
-        /// <summary>
-        /// Creates a new <see cref="TRectangle" /> instance from a position and size.
-        /// </summary>
         public TRectangle(TPoint position, TPoint size)
         {
             this.Left = position.X;
@@ -53,67 +44,34 @@ namespace ThoNohT.NohBoard.Extra
 
         #region Edges
 
-        /// <summary>
-        /// X-coordinate of the left edge
-        /// </summary>
         public int Left { get; private set; }
 
-        /// <summary>
-        /// Y-coordinate of the top edge
-        /// </summary>
         public int Top { get; private set; }
 
-        /// <summary>
-        /// X-coordinate of the rightedge
-        /// </summary>
         public int Right { get; private set; }
 
-        /// <summary>
-        /// Y-coordinate of the bottom edge
-        /// </summary>
         public int Bottom { get; private set; }
 
         #endregion Edges
 
         #region Corner points
 
-        /// <summary>
-        /// Alias for TopLeft.
-        /// </summary>
         public TPoint Position => this.TopLeft;
 
-        /// <summary>
-        /// Returns a Size object with the Width and Height properties of this rectangle.
-        /// </summary>
         public Size Size => new Size(this.Right - this.Left, this.Bottom - this.Top);
 
-        /// <summary>
-        /// Returns the top left corner of the rectangle as a TPoint.
-        /// </summary>
         public TPoint TopLeft => new TPoint(this.Left, this.Top);
 
-        /// <summary>
-        /// Returns the top right corner of the rectangle as a TPoint.
-        /// </summary>
         public TPoint TopRight => new TPoint(this.Right, this.Top);
 
-        /// <summary>
-        /// Returns the bottom left corner of the rectangle as a TPoint.
-        /// </summary>
         public TPoint BottomLeft => new TPoint(this.Left, this.Bottom);
 
-        /// <summary>
-        /// Returns the bottom right corner of the rectangle as a TPoint.
-        /// </summary>
         public TPoint BottomRight => new TPoint(this.Right, this.Bottom);
 
         #endregion Corner points
 
         #region Methods
 
-        /// <summary>
-        /// Creates a rectangle that surrounds all points in a list.
-        /// </summary>
         public static TRectangle FromPointList(TPoint[] points)
         {
             var left = int.MaxValue;

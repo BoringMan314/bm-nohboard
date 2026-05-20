@@ -21,26 +21,14 @@ namespace ThoNohT.NohBoard.Extra
     using System.Drawing;
     using System.Drawing.Imaging;
 
-    /// <summary>
-    /// Applies overlay transparency to frame and fill colors (not key text).
-    /// </summary>
     public static class OverlayTransparency
     {
         public const int MaxTransparencyPercent = 99;
 
-        /// <summary>
-        /// Clamps a transparency percentage to 0–99. 100% would hide image-based keyboard styles completely.
-        /// </summary>
         public static int ClampPercent(int percent) => Math.Max(0, Math.Min(MaxTransparencyPercent, percent));
 
-        /// <summary>
-        /// Kept for callers that distinguish "hide" from "fade"; 100% is normalized to 99%, so this stays false.
-        /// </summary>
         public static bool HidesFrameAndFill(int transparencyPercent) => false;
 
-        /// <summary>
-        /// Applies transparency to a color. 0% = unchanged, 99% = almost transparent but still visible.
-        /// </summary>
         public static Color Apply(Color color, int transparencyPercent)
         {
             var p = ClampPercent(transparencyPercent);
@@ -51,9 +39,6 @@ namespace ThoNohT.NohBoard.Extra
             return Color.FromArgb(a, color.R, color.G, color.B);
         }
 
-        /// <summary>
-        /// Returns a brush with transparency applied. Solid brushes are copied; other brush types are returned as-is.
-        /// </summary>
         public static Brush ApplyToBrush(Brush brush, int transparencyPercent)
         {
             if (HidesFrameAndFill(transparencyPercent))
@@ -66,20 +51,13 @@ namespace ThoNohT.NohBoard.Extra
             return brush;
         }
 
-        /// <summary>
-        /// Creates a pen for key outlines with transparency applied.
-        /// </summary>
         public static Pen CreateOutlinePen(Color outline, float width, int transparencyPercent) =>
             new Pen(Apply(outline, transparencyPercent), width);
 
-        /// <summary>
-        /// Color matrix that scales alpha for images (background image, texture fills).
-        /// </summary>
         public static ColorMatrix CreateAlphaColorMatrix(int transparencyPercent)
         {
             var p = ClampPercent(transparencyPercent);
             var scale = (float)(100 - p) / 100f;
-            // Scale RGB and A together so semi-transparent pixels are not drawn as full-brightness white.
             return new ColorMatrix
             {
                 Matrix00 = scale,
@@ -90,9 +68,6 @@ namespace ThoNohT.NohBoard.Extra
             };
         }
 
-        /// <summary>
-        /// Draws an image with transparency applied.
-        /// </summary>
         public static void DrawImage(Graphics g, Image image, Rectangle dest, int transparencyPercent)
         {
             if (ClampPercent(transparencyPercent) == 0)

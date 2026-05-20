@@ -4,21 +4,40 @@ cd /d "%~dp0"
 
 set "SLN=NohBoard\NohBoard.sln"
 set "CSPROJ=NohBoard\NohBoard\NohBoard.csproj"
-set "EXE_NAME=NohBoard.exe"
-set "ZIP_NAME=NohBoard_windows_x64.zip"
+set "EXE_NAME=bm-nohboard.exe"
+set "VER_SRC=%~dp0NohBoard\NohBoard\Version.cs.template"
+if not exist "%VER_SRC%" set "VER_SRC=%~dp0NohBoard\NohBoard\Version.cs"
+if not exist "%VER_SRC%" (
+  echo [build_win10] FAIL: missing Version.cs.template / Version.cs
+  goto :end_fail
+)
+for /f "usebackq tokens=2 delims==" %%A in (`findstr /C:"public const string Get" "%VER_SRC%"`) do set "VER_RAW=%%A"
+if not defined VER_RAW (
+  echo [build_win10] FAIL: could not read version from %VER_SRC%
+  goto :end_fail
+)
+set "VER_RAW=%VER_RAW: =%"
+set "VER_RAW=%VER_RAW:"=%"
+set "VER_RAW=%VER_RAW:v=%"
+set "VER_RAW=%VER_RAW:;=%"
+set "VER_LABEL=V%VER_RAW%"
+if "%VER_RAW%"=="" (
+  echo [build_win10] FAIL: invalid version in %VER_SRC%
+  goto :end_fail
+)
+set "ZIP_NAME=bm-nohboard_windows_x64-%VER_LABEL%.zip"
 set "PUBTMP=%~dp0dist\_publish"
 set "BUNDLE=%~dp0dist\_bundle"
 
 echo [build_win10] NohBoard Win10/x64: self-contained publish ^(.NET bundled^) + dist\%ZIP_NAME%
 
 if not exist "%~dp0NohBoard\gotri.exe" (
-  echo [build_win10] FAIL: missing NohBoard\gotri.exe ^(needed for Version.cs / AssemblyInfo^)
+  echo [build_win10] FAIL: missing NohBoard\gotri.exe
   goto :end_fail
 )
 
 taskkill /F /IM "%EXE_NAME%" /T >nul 2>&1
 
-rem Stray designer file: duplicates MainForm.resx embedded name (MSB3577)
 set "STRAY_RESX=NohBoard\NohBoard\Forms\MainForm.Editmode.resx"
 if exist "%STRAY_RESX%" (
   echo [build_win10] removing stray %STRAY_RESX%
@@ -43,7 +62,6 @@ if errorlevel 1 (
   goto :end_fail
 )
 
-rem Use trailing / inside quotes - CMD treats \" at end of path as escaped quote and breaks -o
 dotnet publish "%CSPROJ%" -c Release --self-contained true "/p:SolutionDir=%~dp0NohBoard/" -o "%PUBTMP%"
 if errorlevel 1 (
   echo [build_win10] FAIL: dotnet publish
@@ -63,7 +81,7 @@ if errorlevel 1 (
 )
 
 if not exist "keyboards" (
-  echo [build_win10] FAIL: missing keyboards\ ^(repo root^)
+  echo [build_win10] FAIL: missing keyboards\
   goto :end_fail
 )
 
@@ -108,7 +126,7 @@ if errorlevel 1 goto zip_warn
 if exist "%~dp0dist\%ZIP_NAME%" goto zip_ok
 
 :zip_warn
-echo [build_win10] WARN: zip failed ^(install 7-Zip / use Windows tar / PS 5+^)
+echo [build_win10] WARN: zip failed
 echo [build_win10] OK: staged folder remains - %BUNDLE%
 goto :end_ok
 

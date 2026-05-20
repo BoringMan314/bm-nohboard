@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 namespace ThoNohT.NohBoard.Forms
 {
     using System;
@@ -26,38 +25,20 @@ namespace ThoNohT.NohBoard.Forms
     using Hooking;
     using ThoNohT.NohBoard.Hooking.Interop;
 
-    /// <summary>
-    /// The settings form.
-    /// </summary>
     public partial class SettingsForm : Form
     {
-        /// <summary>
-        /// Indicates whether the form is currently capturing the trap toggle key.
-        /// </summary>
         private bool capturingKey = false;
 
-        /// <summary>
-        /// The keycode of the key to use for toggling traps.
-        /// </summary>
         private int trapToggleKey;
 
-        /// <summary>
-        /// UI language preview while the dialog is open (applied on OK).
-        /// </summary>
         private string previewUiLanguage;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsForm" /> class.
-        /// </summary>
         public SettingsForm()
         {
             this.InitializeComponent();
             this.AttachCaptureCancelMouseHandlers(this);
         }
 
-        /// <summary>
-        /// Handles the loading of the settings form, all control values are set.
-        /// </summary>
         private void SettingsForm_Load(object sender, System.EventArgs e)
         {
             var main = Application.OpenForms.OfType<MainForm>().FirstOrDefault(f => !f.IsDisposed);
@@ -72,9 +53,6 @@ namespace ThoNohT.NohBoard.Forms
             this.BindControlsFromGlobalSettings();
         }
 
-        /// <summary>
-        /// Fills the dialog controls from <see cref="GlobalSettings.Settings"/>.
-        /// </summary>
         private void BindControlsFromGlobalSettings()
         {
             this.udMouseSensitivity.Value = GlobalSettings.Settings.MouseSensitivity;
@@ -115,9 +93,6 @@ namespace ThoNohT.NohBoard.Forms
             this.udOverlayTransparency.Value = GlobalSettings.Settings.OverlayTransparencyPercent;
         }
 
-        /// <summary>
-        /// Restores defaults for options edited on this dialog only (loaded keyboard/style and window position are unchanged).
-        /// </summary>
         private static void ApplySettingsDialogDefaultsFromFactory()
         {
             var d = new GlobalSettings();
@@ -151,7 +126,7 @@ namespace ThoNohT.NohBoard.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                AppModalUi.ShowMessageBox(
                     this,
                     $"無法儲存設定檔：{Environment.NewLine}{ex.Message}",
                     "NohBoard",
@@ -177,11 +152,11 @@ namespace ThoNohT.NohBoard.Forms
         private static string NextUiLanguage(string current) =>
             current switch
             {
-                UiLanguageCode.EnUs => UiLanguageCode.ZhTw,
                 UiLanguageCode.ZhTw => UiLanguageCode.ZhCn,
                 UiLanguageCode.ZhCn => UiLanguageCode.JaJp,
                 UiLanguageCode.JaJp => UiLanguageCode.EnUs,
-                _ => UiLanguageCode.EnUs,
+                UiLanguageCode.EnUs => UiLanguageCode.ZhTw,
+                _ => UiLanguageCode.ZhTw,
             };
 
         private void ApplyUiLanguage()
@@ -236,16 +211,30 @@ namespace ThoNohT.NohBoard.Forms
             this.chkFollowShiftCapsSensitive.Text = UiTranslate.T(lang, "Caps Lock sensitive keys", "受 Caps Lock 影響的鍵", "受 Caps Lock 影响的键", "Caps Lock の影響を受けるキー");
 
             this.OkButton.Text = UiTranslate.T(lang, "Ok", "確定", "确定", "OK");
+            this.ApplyButton.Text = UiTranslate.T(lang, "Apply", "套用", "应用", "適用");
             this.CancelButton2.Text = UiTranslate.T(lang, "Cancel", "取消", "取消", "キャンセル");
             this.btnResetSettings.Text = UiTranslate.T(lang, "Reset settings", "重置設定", "重置设置", "設定をリセット");
         }
 
-        /// <summary>
-        /// Handles clicking of the OK button, the new settings are applied and saved and the form is closed.
-        /// </summary>
+        private void ApplyButton_Click(object sender, System.EventArgs e)
+        {
+            if (!this.TryCommitSettingsToGlobalAndSave())
+                return;
+
+            this.ApplyCommittedSettingsToMainWindow();
+            this.ClearActiveButtonFocus();
+        }
+
         private void OkButton_Click(object sender, System.EventArgs e)
         {
-            // Apply the new settings.
+            if (!this.TryCommitSettingsToGlobalAndSave())
+                return;
+
+            this.DialogResult = DialogResult.OK;
+        }
+
+        private bool TryCommitSettingsToGlobalAndSave()
+        {
             GlobalSettings.Settings.MouseSensitivity = (int)this.udMouseSensitivity.Value;
             GlobalSettings.Settings.ScrollHold = (int)this.udScrollHold.Value;
 
@@ -281,22 +270,24 @@ namespace ThoNohT.NohBoard.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                AppModalUi.ShowMessageBox(
                     this,
                     $"無法儲存設定檔：{Environment.NewLine}{ex.Message}",
                     "NohBoard",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                return;
+                return false;
             }
 
-            this.DialogResult = DialogResult.OK;
+            return true;
         }
 
-        /// <summary>
-        /// Handles the setting of a new trap hotkey, if we are capturing, the pressed key is stored and the capturing
-        /// state is removed.
-        /// </summary>
+        private void ApplyCommittedSettingsToMainWindow()
+        {
+            var main = Application.OpenForms.OfType<MainForm>().FirstOrDefault(f => !f.IsDisposed);
+            main?.ApplySettings();
+        }
+
         private void txtToggleKey_KeyUp(object sender, KeyEventArgs e)
         {
             if (!this.capturingKey) return;
@@ -316,9 +307,6 @@ namespace ThoNohT.NohBoard.Forms
             this.EndTrapToggleCapture();
         }
 
-        /// <summary>
-        /// Sets the capturing state for the trap hotkey. Any key pressed will be the hotkey.
-        /// </summary>
         private void txtToggleKey_Click(object sender, System.EventArgs e)
         {
             HookManager.DisableKeyboardHook();
@@ -333,9 +321,6 @@ namespace ThoNohT.NohBoard.Forms
             this.SyncTrapToggleKeyEditorAlignment();
         }
 
-        /// <summary>
-        /// Scroll Lock maps to <see cref="Keys.Scroll"/>; <see cref="Keys.ToString"/> yields "Scroll", which looks truncated.
-        /// </summary>
         private static string FormatTrapToggleKeyForDisplay(Keys key)
         {
             if ((int)key == Defines.VK_SCROLL)
@@ -348,9 +333,6 @@ namespace ThoNohT.NohBoard.Forms
             this.txtToggleKey.TextAlign = ContentAlignment.MiddleCenter;
         }
 
-        /// <summary>
-        /// Updates the enabled state of the follow shift check boxes.
-        /// </summary>
         private void rdbFollowKeystate_CheckedChanged(object sender, System.EventArgs e)
         {
             this.chkFollowShiftCapsInsensitive.Enabled = !this.rdbFollowKeystate.Checked;

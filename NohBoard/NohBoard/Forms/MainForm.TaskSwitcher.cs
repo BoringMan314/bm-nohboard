@@ -12,10 +12,6 @@ namespace ThoNohT.NohBoard.Forms
     using System;
     using System.Runtime.InteropServices;
 
-    /// <summary>
-    /// Ask DWM to prefer an iconic (application icon) preview in the task switcher instead of a live window thumbnail.
-    /// Helps layered / <c>UpdateLayeredWindow</c> surfaces where live capture is often blank.
-    /// </summary>
     public partial class MainForm
     {
         private const int DwmwaForceIconicRepresentation = 7;
@@ -27,9 +23,6 @@ namespace ThoNohT.NohBoard.Forms
             ref int pvAttribute,
             int cbAttribute);
 
-        /// <summary>
-        /// Sets <see cref="DwmwaForceIconicRepresentation"/> on the main HWND so Alt+Tab / task overview use the exe-style icon bitmap when the compositor cannot thumbnail layered content reliably.
-        /// </summary>
         private void ApplyTaskSwitcherIconicPreviewPreference()
         {
             if (!this.IsHandleCreated || this.Handle == IntPtr.Zero)
@@ -46,7 +39,6 @@ namespace ThoNohT.NohBoard.Forms
             }
             catch
             {
-                // DWM unavailable or attribute unsupported — ignore.
             }
         }
     }

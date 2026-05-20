@@ -23,39 +23,23 @@ namespace ThoNohT.NohBoard.Forms
     using System.Windows.Forms;
     using Extra;
 
-    /// <summary>
-    /// The form used to save a keyboard under a new name.
-    /// </summary>
     public partial class SaveKeyboardAsForm : Form
     {
-        /// <summary>
-        /// The name of the currently selected category.
-        /// </summary>
         private string SelectedCategory => this.CategoryCombo.Text.SanitizeFilename();
 
-        /// <summary>
-        /// The name of the currently selected defintion.
-        /// </summary>
         private string SelectedDefinition => this.DefinitionCombo.Text.SanitizeFilename();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SaveKeyboardAsForm" /> class.
-        /// </summary>
         public SaveKeyboardAsForm()
         {
             this.InitializeComponent();
         }
 
-        /// <summary>
-        /// Initializes the form, pre-filling the list of categories and definitions in the current category.
-        /// </summary>
         private void SaveKeyboardAsForm_Load(object sender, EventArgs e)
         {
             this.ApplyLocalizedSaveKeyboardTexts();
 
             var root = FileHelper.FromKbs();
 
-            // If there are no keyboard files, no initialization is required.
             if (!root.Exists) return;
 
             this.CategoryCombo.Items.AddRange(root.EnumerateDirectories().Select(x => (object)x.Name).ToArray());
@@ -75,10 +59,6 @@ namespace ThoNohT.NohBoard.Forms
             this.CancelButton2.Text = UiTranslate.T(L, "Cancel", "取消", "取消", "キャンセル");
         }
 
-        /// <summary>
-        /// Populates the list of keyboards for the specified category.
-        /// </summary>
-        /// <param name="category">The category to load the keyboards from.</param>
         private void PopulateKeyboards(string category)
         {
             var root = FileHelper.FromKbs(category);
@@ -88,29 +68,22 @@ namespace ThoNohT.NohBoard.Forms
             this.DefinitionCombo.Items.AddRange(root.EnumerateDirectories().Select(x => (object)x.Name).ToArray());
         }
 
-        /// <summary>
-        /// Handles the change of the category combo selection change, re-populates keyboards.
-        /// </summary>
         private void CategoryCombo_TextChanged(object sender, EventArgs e)
         {
             this.PopulateKeyboards(this.SelectedCategory);
         }
 
-        /// <summary>
-        /// Saves the keyboard definition in the specified location.
-        /// </summary>
         private void SaveButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(this.SelectedCategory) || string.IsNullOrWhiteSpace(this.SelectedDefinition))
                 return;
 
-            // Check for a reserved name.
             if (string.Equals(
                 this.SelectedCategory,
                 Constants.GlobalStylesFolder,
                 StringComparison.InvariantCultureIgnoreCase))
             {
-                var result = MessageBox.Show(
+                var result = AppModalUi.ShowMessageBox(
                     this,
                     string.Format(
                         UiTranslate.T(
@@ -129,10 +102,9 @@ namespace ThoNohT.NohBoard.Forms
                 return;
             }
 
-            // Check if the name already exists.
             if (FileHelper.FromKbs(this.SelectedCategory, this.SelectedDefinition).Exists)
             {
-                var result = MessageBox.Show(
+                var result = AppModalUi.ShowMessageBox(
                     this,
                     string.Format(
                         UiTranslate.T(
@@ -153,7 +125,6 @@ namespace ThoNohT.NohBoard.Forms
                 }
             }
 
-            // Save the definition.
             GlobalSettings.CurrentDefinition.Category = this.SelectedCategory;
             GlobalSettings.CurrentDefinition.Name = this.SelectedDefinition;
             GlobalSettings.CurrentDefinition.Save();

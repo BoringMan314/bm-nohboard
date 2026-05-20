@@ -22,9 +22,6 @@ namespace ThoNohT.NohBoard.Extra
     using System.Drawing.Imaging;
     using System.Runtime.InteropServices;
 
-    /// <summary>
-    /// Presents a 32bpp ARGB bitmap through <c>UpdateLayeredWindow</c> (Microsoft layered-window sample).
-    /// </summary>
     public static class LayeredWindowHelper
     {
         private const byte AcSrcOver = 0x00;
@@ -37,10 +34,6 @@ namespace ThoNohT.NohBoard.Extra
 
         private const uint DibRgbColors = 0;
 
-        /// <summary>
-        /// Converts straight-alpha pixels to premultiplied BGRA (required by <c>UpdateLayeredWindow</c> + <c>ULW_ALPHA</c>).
-        /// Without this, lowering alpha while keeping RGB at 255 produces a white haze.
-        /// </summary>
         public static void PremultiplyAlpha(Bitmap bitmap)
         {
             if (bitmap == null)
@@ -89,9 +82,6 @@ namespace ThoNohT.NohBoard.Extra
             }
         }
 
-        /// <summary>
-        /// Updates a layered window using a DIB section (preserves per-pixel alpha; <c>GetHbitmap()</c> does not).
-        /// </summary>
         public static bool TryUpdateLayeredWindow(IntPtr hwnd, Bitmap bitmap, Point screenDestination)
         {
             if (hwnd == IntPtr.Zero || bitmap == null)

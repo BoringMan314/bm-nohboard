@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -20,23 +20,10 @@ namespace ThoNohT.NohBoard.Hooking
     using System.Collections;
     using System.Collections.Generic;
 
-    /// <summary>
-    /// A circular buffer that will never grow beyond its specified size. It is pre-filled with a specified default
-    /// element.
-    /// </summary>
-    /// <typeparam name="T">The element type.</typeparam>
     public class CircleBuffer<T> : IEnumerable<T>
     {
-        /// <summary>
-        /// The internally wrapped state.
-        /// </summary>
         private readonly Queue<T> state;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CircleBuffer{T}" /> class.
-        /// </summary>
-        /// <param name="size">The size of the buffer.</param>
-        /// <param name="defaultElem">The default element to pre-fill the buffer with.</param>
         public CircleBuffer(int size, T defaultElem)
         {
             this.Size = size;
@@ -45,10 +32,6 @@ namespace ThoNohT.NohBoard.Hooking
                 this.state.Enqueue(defaultElem);
         }
 
-        /// <summary>
-        /// Adds an element to the buffer. If the buffer is full, the oldest element is removed first.
-        /// </summary>
-        /// <param name="elem">The element to add.</param>
         public void Add(T elem)
         {
             lock (this.state)
@@ -58,17 +41,8 @@ namespace ThoNohT.NohBoard.Hooking
             }
         }
 
-        /// <summary>
-        /// The size of this circle buffer.
-        /// </summary>
         public int Size { get; }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the collection.
-        /// </returns>
         public IEnumerator<T> GetEnumerator()
         {
             lock (this.state)
@@ -77,12 +51,6 @@ namespace ThoNohT.NohBoard.Hooking
             }
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="IEnumerator"/> object that can be used to iterate through the collection.
-        /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();

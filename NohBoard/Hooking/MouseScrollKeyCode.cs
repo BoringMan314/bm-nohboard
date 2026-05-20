@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -17,29 +17,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace ThoNohT.NohBoard.Hooking
 {
-    /// <summary>
-    /// An enumeration listing the possible scroll directions and their codes.
-    /// </summary>
     public enum MouseScrollKeyCode : byte
     {
-        /// <summary>
-        /// Scrolling up.
-        /// </summary>
         ScrollUp,
 
-        /// <summary>
-        /// Scrolling down.
-        /// </summary>
         ScrollDown,
 
-        /// <summary>
-        /// Scrolling to the right.
-        /// </summary>
         ScrollRight,
 
-        /// <summary>
-        /// Scrolling to the left.
-        /// </summary>
         ScrollLeft
     }
 }

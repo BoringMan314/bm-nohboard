@@ -24,12 +24,9 @@ namespace ThoNohT.NohBoard.Forms
     using ThoNohT.NohBoard;
     using ThoNohT.NohBoard.Extra;
 
-    /// <summary>
-    /// System tray: minimize / close hides overlay; tray menu restores or exits.
-    /// </summary>
     public partial class MainForm
     {
-        private const string TrayAboutUrl = "https://github.com/ThoNohT/NohBoard";
+        private const string TrayAboutUrl = Constants.RepositoryUrl;
 
         private NotifyIcon _trayIcon;
         private ContextMenuStrip _trayMenu;
@@ -159,7 +156,6 @@ namespace ThoNohT.NohBoard.Forms
 
             this.ShowInTaskbar = true;
             this.WindowState = FormWindowState.Normal;
-            // Always snap to default screen position so the overlay cannot stay off-screen after tray restore.
             FormPlacement.MoveMainFormToDefaultPosition(this);
             this.Show();
             FormPlacement.FocusMainForm(this);
@@ -177,9 +173,6 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// True when there are unsaved definition or style changes and we should prompt (suppress during crash shutdown).
-        /// </summary>
         private static bool HasUnsavedChangesPendingUserPrompt() =>
             (GlobalSettings.UnsavedDefinitionChanges || GlobalSettings.UnsavedStyleChanges) && !CrashHandler.Crashed;
 
@@ -188,8 +181,7 @@ namespace ThoNohT.NohBoard.Forms
             if (!HasUnsavedChangesPendingUserPrompt())
                 return true;
 
-            var result = MessageBox.Show(
-                this,
+            var result = this.ShowAppMessageBox(
                 UiTranslate.T(
                     "You have unsaved changes. If you exit now you will lose them. Are you sure you want to exit?",
                     "有尚未儲存的變更。現在結束將會遺失這些變更。確定要結束嗎？",
@@ -253,7 +245,6 @@ namespace ThoNohT.NohBoard.Forms
                 return;
 
             this._exitingApp = true;
-            // Defer close so the context menu is not enumerating forms during Application.Exit.
             this.BeginInvoke(new Action(() => this.Close()));
         }
 

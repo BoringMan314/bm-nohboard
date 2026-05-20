@@ -21,22 +21,10 @@ namespace ThoNohT.NohBoard.Forms
     using System.Windows.Forms;
     using ThoNohT.NohBoard.Hooking.Interop;
 
-    /// <summary>
-    /// A color chooser.
-    /// </summary>
     public partial class ColorChooser : UserControl
     {
-        /// <summary>
-        /// The delegate to invoke when the color has been changed.
-        /// </summary>
-        /// <param name="sender">The control that changed the color.</param>
-        /// <param name="color">The new color.</param>
         public delegate void ColorChangedEventHandler(ColorChooser sender, Color color);
 
-        /// <summary>
-        /// The event that is invoked when the color has been changed. Only invoked when the color is changed through
-        /// the user interface, not when it is changed programmatically.
-        /// </summary>
         public event ColorChangedEventHandler ColorChanged;
 
         public enum Shape
@@ -58,26 +46,18 @@ namespace ThoNohT.NohBoard.Forms
             this.SetStyle(ControlStyles.ResizeRedraw, true);
         }
 
-        /// <summary>
-        /// The selected color.
-        /// </summary>
         public Color Color { get; set; }
 
-        /// <summary>
-        /// The text to display.
-        /// </summary>
         public string LabelText
         {
             get { return this.DisplayLabel.Text; }
             set { this.DisplayLabel.Text = value; }
         }
 
-
         public Shape PreviewShape { get; set; } = Shape.Square;
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            // Draw the square at the start.
             switch (this.PreviewShape)
             {
                 case Shape.Square:
@@ -98,7 +78,7 @@ namespace ThoNohT.NohBoard.Forms
                 Color = this.Color, FullOpen = true
             };
 
-            if (HookManager.RunModalUi(() => picker.ShowDialog(this)) == DialogResult.OK)
+            if (AppModalUi.ShowCommonDialog(picker, this.FindForm()) == DialogResult.OK)
                 this.Color = picker.Color;
 
             this.Refresh();

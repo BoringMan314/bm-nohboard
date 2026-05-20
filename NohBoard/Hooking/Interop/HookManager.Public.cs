@@ -23,82 +23,40 @@ namespace ThoNohT.NohBoard.Hooking.Interop
     using static Defines;
     using static FunctionImports;
 
-    /// <summary>
-    /// The public interface for the <see cref="HookManager"/> class.
-    /// </summary>
     public static partial class HookManager
     {
         #region Properties
 
-        /// <summary>
-        /// This property is set from outside this class. If <c>true</c>, <see cref="TrapToggleKeyCode"/> can toggle
-        /// the mouse trap.
-        /// </summary>
         public static bool TrapMouse { get; set; }
 
-        /// <summary>
-        /// This property is set from outside this class. If <c>true</c>, <see cref="TrapToggleKeyCode"/> key can
-        /// toggle the keyboard trap.
-        /// </summary>
         public static bool TrapKeyboard { get; set; }
 
-        /// <summary>
-        /// If this property is set, every key-code processed from the keyboard will be passed through this function.
-        /// If the function returns true, the keycode is then trapped.
-        /// </summary>
         public static Func<int, bool> KeyboardInsert = null;
 
-        /// <summary>
-        /// The keycode that toggles the mouse and or keyboard traps. Default is Scroll Lock.
-        /// </summary>
 	    public static int TrapToggleKeyCode { get; set; } = VK_SCROLL;
 
-        /// <summary>
-        /// The time in milliseconds to hold the scroll key.
-        /// </summary>
         public static int ScrollHold { get; set; } = 50;
 
-        /// <summary>
-        /// The minimum time in milliseconds to hold key presses.
-        /// </summary>
         public static int PressHold { get; set; } = 0;
 
-        /// <summary>
-        /// While &gt; 0, keyboard/mouse traps do not block other applications (e.g. settings dialog text boxes).
-        /// </summary>
         private static int modalUiNestCount;
 
         #endregion Properties
 
         #region Methods
 
-        /// <summary>
-        /// Disables input trapping until <see cref="ExitModalUiScope"/> (nestable).
-        /// </summary>
         public static void EnterModalUiScope() => modalUiNestCount++;
 
-        /// <summary>
-        /// Restores trapping after a modal dialog closes.
-        /// </summary>
         public static void ExitModalUiScope()
         {
             if (modalUiNestCount > 0)
                 modalUiNestCount--;
         }
 
-        /// <summary>
-        /// True while a modal dialog (e.g. settings) is open.
-        /// </summary>
         public static bool IsModalUiActive => modalUiNestCount > 0;
 
-        /// <summary>
-        /// Runs UI that must not compete with overlay repaint or input traps (file dialogs, etc.).
-        /// </summary>
         public static void RunModalUi(Action action) => RunModalUi(() => { action(); return 0; });
 
-        /// <summary>
-        /// Runs modal UI and returns a result (nested color pickers, file dialogs, etc.).
-        /// </summary>
         public static T RunModalUi<T>(Func<T> func)
         {
             EnterModalUiScope();
@@ -112,9 +70,6 @@ namespace ThoNohT.NohBoard.Hooking.Interop
             }
         }
 
-        /// <summary>
-        /// Enables the mouse hook.
-        /// </summary>
         public static void EnableMouseHook()
         {
             if (mouseHookHandle != 0) return;
@@ -124,13 +79,9 @@ namespace ThoNohT.NohBoard.Hooking.Interop
 
             if (mouseHookHandle != 0) return;
 
-            // If subscription failed, throw an exception with the error that occurred during the hook process.
             throw new Win32Exception(Marshal.GetLastWin32Error());
         }
 
-        /// <summary>
-        /// Disables the mouse hook.
-        /// </summary>
         public static void DisableMouseHook()
         {
             if (mouseHookHandle == 0) return;
@@ -141,13 +92,9 @@ namespace ThoNohT.NohBoard.Hooking.Interop
 
             if (result != 0) return;
 
-            // If unsubscription failed, throw an exception with the error that occurred during the hook process.
             throw new Win32Exception(Marshal.GetLastWin32Error());
         }
 
-        /// <summary>
-        /// Enables the keyboard hook.
-        /// </summary>
         public static void EnableKeyboardHook()
         {
             if (keyboardHookHandle != 0) return;
@@ -157,13 +104,9 @@ namespace ThoNohT.NohBoard.Hooking.Interop
 
             if (keyboardHookHandle != 0) return;
 
-            // If subscription failed, throw an exception with the error that occurred during the hook process.
             throw new Win32Exception(Marshal.GetLastWin32Error());
         }
 
-        /// <summary>
-        /// Disables the keyboard hook.
-        /// </summary>
         public static void DisableKeyboardHook()
         {
             if (keyboardHookHandle == 0) return;
@@ -174,7 +117,6 @@ namespace ThoNohT.NohBoard.Hooking.Interop
 
             if (result != 0) return;
 
-            // If unsubscription failed, throw an exception with the error that occurred during the hook process.
             throw new Win32Exception(Marshal.GetLastWin32Error());
         }
 
