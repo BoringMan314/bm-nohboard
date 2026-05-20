@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ namespace ThoNohT.NohBoard.Forms
     using System.Linq;
     using System.Windows.Forms;
     using Extra;
+    using ThoNohT.NohBoard.Hooking.Interop;
     using ThoNohT.NohBoard.Keyboard;
     using ThoNohT.NohBoard.Legacy;
 
@@ -53,6 +54,14 @@ namespace ThoNohT.NohBoard.Forms
         /// A value indicating whether the form has completed loading.
         /// </summary>
         private bool loaded = false;
+
+        /// <summary>
+        /// While repopulating the style list, skip <see cref="StyleList_SelectedIndexChanged"/> (preview runs from the definition handler).
+        /// </summary>
+        private bool styleListProgrammaticChange;
+
+        /// <summary>Avoid re-entrancy when column widths trigger layout.</summary>
+        private bool fontsGridApplyingColumnWidths;
 
         /// <summary>
         /// The list of global styles, this is constant regardless of the loaded styles for specific keyboards.
@@ -120,6 +129,7 @@ namespace ThoNohT.NohBoard.Forms
         public LoadKeyboardForm()
         {
             this.InitializeComponent();
+            this.fontsGrid.Resize += this.fontsGrid_ColumnWidthsResize;
         }
 
         #endregion Constructors
@@ -133,23 +143,37 @@ namespace ThoNohT.NohBoard.Forms
         {
             if (!missingFonts.Any())
             {
-                // Hide the panel.
-                this.Width = 422;
+                // Hide the panel: client width = middle column right (195+180) + 10 px — same control sizes as designer, no stretching.
+                this.ClientSize = new System.Drawing.Size(385, 336);
                 this.fontsGrid.Enabled = false;
                 this.btnRestart.Enabled = false;
+                this.lblMissingFonts.Visible = false;
+                this.fontsGridPanel.Visible = false;
+                this.lblRestart.Visible = false;
+                this.btnRestart.Visible = false;
             }
             else
             {
-                this.Width = 1025;
+                // Client width = fontsGridPanel right (380+600) + 10 margin — do not use Form.Width here or borders inflate the client area.
+                this.ClientSize = new System.Drawing.Size(990, 336);
                 this.fontsGrid.Enabled = true;
                 this.btnRestart.Enabled = true;
+                this.lblMissingFonts.Visible = true;
+                this.fontsGridPanel.Visible = true;
+                this.lblRestart.Visible = true;
+                this.btnRestart.Visible = true;
 
+                var L = UiTranslate.Lang;
                 var gridData = missingFonts
-                    .Select(f => new MissingFont { Name = f.FontFamily, Link = f.DownloadUrl ?? "No download URL provided" })
+                    .Select(f => new MissingFont
+                    {
+                        Name = f.FontFamily,
+                        Link = f.DownloadUrl ?? UiTranslate.T(L, "No download URL provided", "未提供下載連結", "未提供下载链接", "ダウンロード URL がありません")
+                    })
                     .ToList();
                 this.fontsGrid.DataSource = gridData;
-                this.fontsGrid.Columns[0].Width = 140;
-                this.fontsGrid.Columns[1].Width = 435;
+                this.ApplyFontsGridColumnWidthsAfterBind();
+                this.ApplyFontsGridColumnHeaders();
 
                 this.fontsGrid.Update();
 
@@ -157,12 +181,60 @@ namespace ThoNohT.NohBoard.Forms
         }
 
         /// <summary>
+        /// Name column fixed width; link column uses remaining grid width (unchanged behavior aside from name width).
+        /// </summary>
+        private void ApplyFontsGridColumnWidthsAfterBind()
+        {
+            if (this.fontsGrid.Columns.Count < 2 || this.fontsGridApplyingColumnWidths)
+                return;
+
+            this.fontsGridApplyingColumnWidths = true;
+            try
+            {
+                const int nameColumnWidth = 140;
+                this.fontsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                this.fontsGrid.Columns[0].MinimumWidth = 80;
+                this.fontsGrid.Columns[0].Width = nameColumnWidth;
+
+                this.fontsGrid.Columns[1].MinimumWidth = 120;
+                var displayWidth = this.fontsGrid.DisplayRectangle.Width;
+                var linkWidth = displayWidth - nameColumnWidth - 3;
+                if (linkWidth < this.fontsGrid.Columns[1].MinimumWidth)
+                    linkWidth = this.fontsGrid.Columns[1].MinimumWidth;
+                this.fontsGrid.Columns[1].Width = linkWidth;
+            }
+            finally
+            {
+                this.fontsGridApplyingColumnWidths = false;
+            }
+        }
+
+        private void fontsGrid_ColumnWidthsResize(object sender, EventArgs e)
+        {
+            this.ApplyFontsGridColumnWidthsAfterBind();
+        }
+
+        private void ApplyFontsGridColumnHeaders()
+        {
+            if (this.fontsGrid.Columns.Count < 2)
+                return;
+
+            var L = UiTranslate.Lang;
+            this.fontsGrid.Columns[0].HeaderText = UiTranslate.T(L, "Name", "名稱", "名称", "名前");
+            this.fontsGrid.Columns[1].HeaderText = UiTranslate.T(L, "Link", "連結", "链接", "リンク");
+        }
+
+        /// <summary>
         /// Loads a legacy keyboard definition. This immediately closes the form and loads it in the main form.
         /// </summary>
         private void LoadLegacyButton_Click(object sender, System.EventArgs e)
         {
-            var dialog = new OpenFileDialog { Filter = "Legacy Keyboard Files|*.kb" };
-            var result = dialog.ShowDialog();
+            var L = UiTranslate.Lang;
+            var dialog = new OpenFileDialog
+            {
+                Filter = UiTranslate.T(L, "Legacy Keyboard Files|*.kb", "舊版鍵盤檔|*.kb", "旧版键盘文件|*.kb", "レガシーキーボード|*.kb")
+            };
+            var result = HookManager.RunModalUi(() => dialog.ShowDialog());
 
             if (result == DialogResult.Cancel) return;
 
@@ -175,6 +247,8 @@ namespace ThoNohT.NohBoard.Forms
         /// </summary>
         private void LoadKeyboardForm_Load(object sender, System.EventArgs e)
         {
+            this.ApplyLocalizedLoadKeyboardTexts();
+
             // Load the list of global styles
             var globalStylesRoot = FileHelper.FromKbs(Constants.GlobalStylesFolder);
 
@@ -209,7 +283,9 @@ namespace ThoNohT.NohBoard.Forms
                 if (GlobalSettings.Settings.LoadedKeyboard != null)
                     this.DefinitionsList.SelectedItem = GlobalSettings.Settings.LoadedKeyboard;
             }
+
             this.loaded = true;
+            this.ApplyPreviewSelection();
         }
 
         /// <summary>
@@ -218,6 +294,9 @@ namespace ThoNohT.NohBoard.Forms
         private void CategoryCombo_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             this.PopulateKeyboards();
+
+            if (this.loaded)
+                this.ApplyPreviewSelection();
         }
 
         /// <summary>
@@ -236,9 +315,18 @@ namespace ThoNohT.NohBoard.Forms
         {
             if (this.SelectedDefinition == null) return;
 
+            var L = UiTranslate.Lang;
             var result = MessageBox.Show(
-                $"Are you sure you want to delete {this.SelectedCategory}/{this.SelectedDefinition}?",
-                "Delete definition",
+                string.Format(
+                    UiTranslate.T(
+                        L,
+                        "Are you sure you want to delete {0}/{1}?",
+                        "確定要刪除 {0}/{1} 嗎？",
+                        "确定要删除 {0}/{1} 吗？",
+                        "{0}/{1} を削除しますか？"),
+                    this.SelectedCategory,
+                    this.SelectedDefinition),
+                UiTranslate.T(L, "Delete definition", "刪除定義", "删除定义", "定義の削除"),
                 MessageBoxButtons.YesNo);
 
             if (result != DialogResult.Yes)
@@ -256,14 +344,12 @@ namespace ThoNohT.NohBoard.Forms
         {
             try
             {
-                var kbDef = KeyboardDefinition.Load(this.SelectedCategory, this.SelectedDefinition);
-
                 this.LoadStyles();
-                if (this.StyleList.Items.Count == 0) this.DefinitionChanged?.Invoke(kbDef, null, false);
-            } catch (Exception ex)
+                this.ApplyPreviewSelection();
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load keyboard {this.SelectedDefinition}: {ex.Message}");
-                return;
+                this.ShowPreviewLoadError(ex, this.SelectedDefinition);
             }
         }
 
@@ -272,18 +358,65 @@ namespace ThoNohT.NohBoard.Forms
         /// </summary>
         private void StyleList_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            if (this.styleListProgrammaticChange)
+                return;
+
             try
             {
-                this.DefinitionChanged?.Invoke(
-                    KeyboardDefinition.Load(this.SelectedCategory, this.SelectedDefinition),
-                    KeyboardStyle.Load(this.SelectedStyle.Name, this.SelectedStyle.Global),
-                    this.SelectedStyle.Global);
+                this.ApplyPreviewSelection();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load keyboard {this.SelectedDefinition}: {ex.Message}");
+                this.ShowPreviewLoadError(ex, this.SelectedStyle?.Name ?? this.SelectedDefinition);
+            }
+        }
+
+        /// <summary>
+        /// Pushes the current category/definition/style selection to the main form preview.
+        /// </summary>
+        private void ApplyPreviewSelection()
+        {
+            if (!this.loaded || this.SelectedDefinition == null)
+                return;
+
+            if (this.StyleList.Items.Count == 0)
+            {
+                this.DefinitionChanged?.Invoke(
+                    KeyboardDefinition.Load(this.SelectedCategory, this.SelectedDefinition, null),
+                    null,
+                    false);
                 return;
             }
+
+            if (this.SelectedStyle == null)
+                return;
+
+            this.DefinitionChanged?.Invoke(
+                KeyboardDefinition.Load(
+                    this.SelectedCategory,
+                    this.SelectedDefinition,
+                    this.SelectedStyle.Name),
+                KeyboardStyle.Load(this.SelectedStyle.Name, this.SelectedStyle.Global),
+                this.SelectedStyle.Global);
+        }
+
+        private void ShowPreviewLoadError(Exception ex, string itemName)
+        {
+            var L = UiTranslate.Lang;
+            AppModalUi.ShowMessageBox(
+                this,
+                string.Format(
+                    UiTranslate.T(
+                        L,
+                        "Failed to load keyboard {0}: {1}",
+                        "載入鍵盤 {0} 失敗：{1}",
+                        "加载键盘 {0} 失败：{1}",
+                        "キーボード {0} の読み込みに失敗しました：{1}"),
+                    itemName,
+                    ex.Message),
+                UiTranslate.T(L, "Load keyboard", "載入鍵盤", "加载键盘", "キーボードを読み込む"),
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -291,15 +424,51 @@ namespace ThoNohT.NohBoard.Forms
         /// </summary>
         private void fontsGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            var linkText = (string)this.fontsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
 
-            if (string.IsNullOrWhiteSpace(linkText)) return;
-            if (!Uri.IsWellFormedUriString(linkText, UriKind.Absolute)) return;
+            var value = this.fontsGrid.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+            var linkText = value as string ?? value?.ToString();
 
-            Process.Start(linkText);
+            if (string.IsNullOrWhiteSpace(linkText))
+                return;
+
+            linkText = linkText.Trim();
+            if (!Uri.TryCreate(linkText, UriKind.Absolute, out var uri))
+                return;
+            if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
+                return;
+
+            Process.Start(new ProcessStartInfo { FileName = uri.AbsoluteUri, UseShellExecute = true });
         }
 
         #region Helpers
+
+        private void ApplyLocalizedLoadKeyboardTexts()
+        {
+            var L = UiTranslate.Lang;
+
+            this.Text = UiTranslate.T(L, "Load Keyboard", "載入鍵盤", "加载键盘", "キーボードを読み込む");
+            this.lblCategory.Text = UiTranslate.T(L, "Category:", "分類：", "类别：", "カテゴリ：");
+            this.lblKeyboardDefinition.Text = UiTranslate.T(L, "Keyboard Definition:", "鍵盤定義：", "键盘定义：", "キーボード定義：");
+            this.lblKeyboardStyle.Text = UiTranslate.T(L, "Keyboard Style:", "鍵盤樣式：", "键盘样式：", "キーボードスタイル：");
+            this.LoadLegacyButton.Text = UiTranslate.T(L, "Load Legacy kb file...", "載入舊版鍵盤檔...", "加载旧版键盘文件...", "レガシー .kb ファイルを読み込む...");
+            this.CloseButton.Text = UiTranslate.T(L, "Close", "關閉", "关闭", "閉じる");
+            this.lblMissingFonts.Text = UiTranslate.T(
+                L,
+                "The following fonts are defined in the chosen style but not present on this system.\r\nIf a link is provided, you may download it by double clicking the link:",
+                "下列字型在所選樣式中有使用，但此電腦未安裝。\r\n若有連結，請連按兩下連結以下載：",
+                "下列字体在所选样式中有使用，但此电脑未安装。\r\n若有链接，请双击链接以下载：",
+                "選択したスタイルで使われている次のフォントが、この PC にありません。\r\nリンクがある場合は、リンクをダブルクリックしてダウンロードできます：");
+            this.lblRestart.Text = UiTranslate.T(
+                L,
+                "After a new font has been installed, NohBoard needs to be restarted to recognize it.",
+                "安裝新字型後，需要重新啟動 NohBoard 才會辨識。",
+                "安装新字体后，需要重新启动 NohBoard 才会识别。",
+                "新しいフォントをインストールした後、NohBoard を再起動すると認識されます。");
+            this.btnRestart.Text = UiTranslate.T(L, "Restart", "重新啟動", "重新启动", "再起動");
+            this.mnuDeleteDefinition.Text = UiTranslate.T(L, "Delete", "刪除", "删除", "削除");
+        }
 
         /// <summary>
         /// Populates the list of keyboards, for the currently selected category.
@@ -343,20 +512,31 @@ namespace ThoNohT.NohBoard.Forms
                     })
                 .ToList();
 
-            this.StyleList.Items.Clear();
-            this.StyleList.Items.AddRange(this.globalStyles.Cast<object>().ToArray());
-            this.StyleList.Items.AddRange(specificStyles.Cast<object>().ToArray());
-
-            // Try to retain the style.
-            var loadedStyle = GlobalSettings.Settings.LoadedStyle;
-            if (this.StyleList.Items.Count > 0) this.StyleList.SelectedIndex = 0;
-            if (loadedStyle != null)
+            this.styleListProgrammaticChange = true;
+            try
             {
-                var styleIndex = this.FindStyleListIndex(loadedStyle);
-                if (styleIndex != -1)
+                this.StyleList.Items.Clear();
+                this.StyleList.Items.AddRange(this.globalStyles.Cast<object>().ToArray());
+                this.StyleList.Items.AddRange(specificStyles.Cast<object>().ToArray());
+
+                if (this.StyleList.Items.Count == 0)
+                    return;
+
+                this.StyleList.SelectedIndex = 0;
+
+                var loadedStyle = GlobalSettings.Settings.LoadedStyle;
+                if (loadedStyle != null
+                    && GlobalSettings.Settings.LoadedCategory == this.SelectedCategory
+                    && GlobalSettings.Settings.LoadedKeyboard == this.SelectedDefinition)
                 {
-                    this.StyleList.SelectedIndex = styleIndex;
+                    var styleIndex = this.FindStyleListIndex(loadedStyle);
+                    if (styleIndex != -1)
+                        this.StyleList.SelectedIndex = styleIndex;
                 }
+            }
+            finally
+            {
+                this.styleListProgrammaticChange = false;
             }
         }
 

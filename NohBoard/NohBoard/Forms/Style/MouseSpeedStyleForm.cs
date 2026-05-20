@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ namespace ThoNohT.NohBoard.Forms.Style
     using System;
     using System.Windows.Forms;
     using Keyboard.Styles;
+    using ThoNohT.NohBoard.Extra;
 
     /// <summary>
     /// The form used to define the style of a mouse speed indicator.
@@ -85,6 +86,8 @@ namespace ThoNohT.NohBoard.Forms.Style
         /// </summary>
         private void MouseSpeedStyleForm_Load(object sender, EventArgs e)
         {
+            this.ApplyLocalizedUiTexts();
+
             // Mouse speed indicator
             this.defaultMouseSpeed.IndicatorStyle = this.currentStyle ?? this.defaultStyle;
             this.chkOverwrite.Checked = this.currentStyle != null;
@@ -92,6 +95,15 @@ namespace ThoNohT.NohBoard.Forms.Style
 
             // Only add the event handler after the initial style has been set.
             this.defaultMouseSpeed.IndicatorStyleChanged += this.defaultMouseSpeed_IndicatorStyleChanged;
+        }
+
+        private void ApplyLocalizedUiTexts()
+        {
+            this.Text = PropertyDialogsLocalization.StyleMouseSpeedIndicatorStyleTitle;
+            this.AcceptButton2.Text = PropertyDialogsLocalization.Accept;
+            this.CancelButton2.Text = PropertyDialogsLocalization.Cancel;
+            this.defaultMouseSpeed.Title = PropertyDialogsLocalization.StyleMouseSpeedShort;
+            this.chkOverwrite.Text = PropertyDialogsLocalization.StyleOverwriteDefaultStyle;
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -93,6 +93,8 @@ namespace ThoNohT.NohBoard.Forms.Style
         /// </summary>
         private void KeyStyleForm_Load(object sender, EventArgs e)
         {
+            this.ApplyLocalizedUiTexts();
+
             // Default key styles.
             this.loose.SubStyle = this.initialStyle?.Loose ?? this.defaultStyle.Loose;
             this.pressed.SubStyle = this.initialStyle?.Pressed ?? this.defaultStyle.Pressed;
@@ -106,6 +108,18 @@ namespace ThoNohT.NohBoard.Forms.Style
             // Only add the event handlers after the initial style has been set.
             this.pressed.StyleChanged += this.pressedKeys_SubStyleChanged;
             this.loose.StyleChanged += this.looseKeys_SubStyleChanged;
+        }
+
+        private void ApplyLocalizedUiTexts()
+        {
+            this.Text = PropertyDialogsLocalization.StyleKeyStyleTitle;
+            this.AcceptButton2.Text = PropertyDialogsLocalization.Accept;
+            this.CancelButton2.Text = PropertyDialogsLocalization.Cancel;
+            this.loose.Title = PropertyDialogsLocalization.StyleLooseShort;
+            this.pressed.Title = PropertyDialogsLocalization.StylePressedShort;
+            this.chkOverwriteLoose.Text = PropertyDialogsLocalization.StyleOverwriteDefaultStyle;
+            this.chkOverwritePressed.Text = PropertyDialogsLocalization.StyleOverwriteDefaultStyle;
+            this.lblOutlineWarning.Text = PropertyDialogsLocalization.StyleOutlineWidthWarning;
         }
 
         /// <summary>

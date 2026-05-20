@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,8 @@ namespace ThoNohT.NohBoard.Forms.Style
     using System;
     using System.Windows.Forms;
     using Controls;
-    using Extra;
-    using Keyboard;
+    using ThoNohT.NohBoard.Extra;
+    using ThoNohT.NohBoard.Keyboard;
     using ThoNohT.NohBoard.Keyboard.Styles;
 
     /// <summary>
@@ -80,6 +80,8 @@ namespace ThoNohT.NohBoard.Forms.Style
         /// </summary>
         private void KeyboardStyleForm_Load(object sender, System.EventArgs e)
         {
+            this.ApplyLocalizedUiTexts();
+
             // Keyboard
             this.clrKeyboardBackground.Color = this.initialStyle.BackgroundColor;
             this.txtBackgoundImage.Text = this.initialStyle.BackgroundImageFileName;
@@ -99,6 +101,21 @@ namespace ThoNohT.NohBoard.Forms.Style
             this.txtBackgoundImage.TextChanged += this.txtBackgoundImage_TextChanged;
 
             this.UpdateOutlineWarning();
+        }
+
+        private void ApplyLocalizedUiTexts()
+        {
+            this.Text = PropertyDialogsLocalization.StyleKeyboardStyleTitle;
+            this.AcceptButton2.Text = PropertyDialogsLocalization.Accept;
+            this.CancelButton2.Text = PropertyDialogsLocalization.Cancel;
+            this.KeyboardGroup.Text = PropertyDialogsLocalization.StyleBackgroundGroup;
+            this.lblBackgroundImage.Text = PropertyDialogsLocalization.StyleImageLabel;
+            this.lblKeyboard.Text = PropertyDialogsLocalization.StyleKeyboardLabel;
+            this.looseKeys.Title = PropertyDialogsLocalization.StyleLooseKeysTitle;
+            this.pressedKeys.Title = PropertyDialogsLocalization.StylePressedKeysTitle;
+            this.defaultMouseSpeed.Title = PropertyDialogsLocalization.StyleMouseSpeedIndicatorPanelTitle;
+            this.clrKeyboardBackground.LabelText = PropertyDialogsLocalization.StyleBackgroundColorLabel;
+            this.lblOutlineWarning.Text = PropertyDialogsLocalization.StyleOutlineWidthWarning;
         }
 
         /// <summary>
@@ -133,7 +150,7 @@ namespace ThoNohT.NohBoard.Forms.Style
         /// Handles the change of the default style for pressed keys. Sets the new styles and invokes the changed event.
         /// </summary>
         /// <param name="style">The new style.</param>
-        private void pressedKeys_SubStyleChanged(Keyboard.Styles.KeySubStyle style)
+        private void pressedKeys_SubStyleChanged(KeySubStyle style)
         {
             this.currentStyle.DefaultKeyStyle.Pressed = style;
             this.StyleChanged?.Invoke(this.currentStyle);
@@ -144,7 +161,7 @@ namespace ThoNohT.NohBoard.Forms.Style
         /// Handles the change of the default style for loose keys. Sets the new styles and invokes the changed event.
         /// </summary>
         /// <param name="style">The new style.</param>
-        private void looseKeys_SubStyleChanged(Keyboard.Styles.KeySubStyle style)
+        private void looseKeys_SubStyleChanged(KeySubStyle style)
         {
             this.currentStyle.DefaultKeyStyle.Loose = style;
             this.StyleChanged?.Invoke(this.currentStyle);
@@ -156,7 +173,7 @@ namespace ThoNohT.NohBoard.Forms.Style
         /// changed event.
         /// </summary>
         /// <param name="style">The new style.</param>
-        private void defaultMouseSpeed_IndicatorStyleChanged(Keyboard.Styles.MouseSpeedIndicatorStyle style)
+        private void defaultMouseSpeed_IndicatorStyleChanged(MouseSpeedIndicatorStyle style)
         {
             this.currentStyle.DefaultMouseSpeedIndicatorStyle = style;
             this.StyleChanged?.Invoke(this.currentStyle);
@@ -171,7 +188,7 @@ namespace ThoNohT.NohBoard.Forms.Style
             this.StyleChanged?.Invoke(this.currentStyle);
         }
 
-
+        /// <summary>
         /// Updates the visibility of the outline warning.
         /// </summary>
         private void UpdateOutlineWarning()

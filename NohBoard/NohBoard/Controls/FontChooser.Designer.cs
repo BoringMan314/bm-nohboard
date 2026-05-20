@@ -1,4 +1,4 @@
-﻿namespace ThoNohT.NohBoard.Controls
+namespace ThoNohT.NohBoard.Controls
 {
     partial class FontChooser
     {
@@ -28,60 +28,59 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.DisplayLabel = new System.Windows.Forms.Label();
-            this.lblLink = new System.Windows.Forms.Label();
-            this.txtLink = new System.Windows.Forms.TextBox();
-            this.SuspendLayout();
+            DisplayLabel = new System.Windows.Forms.Label();
+            lblLink = new System.Windows.Forms.Label();
+            txtLink = new System.Windows.Forms.TextBox();
+            SuspendLayout();
             // 
             // DisplayLabel
             // 
-            this.DisplayLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.DisplayLabel.AutoEllipsis = true;
-            this.DisplayLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.DisplayLabel.Location = new System.Drawing.Point(38, 0);
-            this.DisplayLabel.Name = "DisplayLabel";
-            this.DisplayLabel.Size = new System.Drawing.Size(182, 26);
-            this.DisplayLabel.TabIndex = 0;
-            this.DisplayLabel.Text = "Pick a Font";
-            this.DisplayLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.DisplayLabel.DoubleClick += new System.EventHandler(this.FontChooser_DoubleClick);
-            this.DisplayLabel.Layout += new System.Windows.Forms.LayoutEventHandler(this.DisplayLabel_Layout);
+            DisplayLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            DisplayLabel.AutoEllipsis = true;
+            DisplayLabel.BackColor = System.Drawing.SystemColors.Control;
+            DisplayLabel.Location = new System.Drawing.Point(5, 0);
+            DisplayLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            DisplayLabel.Name = "DisplayLabel";
+            DisplayLabel.Size = new System.Drawing.Size(180, 50);
+            DisplayLabel.TabIndex = 0;
+            DisplayLabel.Text = "Pick a Font";
+            DisplayLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            DisplayLabel.DoubleClick += FontChooser_DoubleClick;
+            DisplayLabel.Layout += DisplayLabel_Layout;
             // 
             // lblLink
             // 
-            this.lblLink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblLink.AutoSize = true;
-            this.lblLink.Location = new System.Drawing.Point(5, 33);
-            this.lblLink.Name = "lblLink";
-            this.lblLink.Size = new System.Drawing.Size(30, 13);
-            this.lblLink.TabIndex = 1;
-            this.lblLink.Text = "Link:";
+            lblLink.Location = new System.Drawing.Point(5, 55);
+            lblLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblLink.Name = "lblLink";
+            lblLink.Size = new System.Drawing.Size(60, 23);
+            lblLink.TabIndex = 1;
+            lblLink.Text = "Link:";
+            lblLink.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // txtLink
             // 
-            this.txtLink.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtLink.Location = new System.Drawing.Point(41, 30);
-            this.txtLink.Name = "txtLink";
-            this.txtLink.Size = new System.Drawing.Size(176, 20);
-            this.txtLink.TabIndex = 2;
-            this.txtLink.TextChanged += new System.EventHandler(this.txtLink_TextChanged);
+            txtLink.Location = new System.Drawing.Point(70, 55);
+            txtLink.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            txtLink.Name = "txtLink";
+            txtLink.Size = new System.Drawing.Size(115, 23);
+            txtLink.TabIndex = 2;
+            txtLink.TextChanged += txtLink_TextChanged;
             // 
             // FontChooser
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.txtLink);
-            this.Controls.Add(this.lblLink);
-            this.Controls.Add(this.DisplayLabel);
-            this.Name = "FontChooser";
-            this.Size = new System.Drawing.Size(220, 50);
-            this.DoubleClick += new System.EventHandler(this.FontChooser_DoubleClick);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.SystemColors.Control;
+            Controls.Add(txtLink);
+            Controls.Add(lblLink);
+            Controls.Add(DisplayLabel);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "FontChooser";
+            Size = new System.Drawing.Size(190, 85);
+            DoubleClick += FontChooser_DoubleClick;
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

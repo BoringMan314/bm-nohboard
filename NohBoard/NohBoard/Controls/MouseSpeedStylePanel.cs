@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ namespace ThoNohT.NohBoard.Controls
     using System;
     using System.Windows.Forms;
     using Keyboard.Styles;
+    using ThoNohT.NohBoard.Extra;
 
 
     /// <summary>
@@ -51,9 +52,18 @@ namespace ThoNohT.NohBoard.Controls
         public MouseSpeedStylePanel()
         {
             this.InitializeComponent();
+            this.ApplyLocalizedChrome();
         }
 
         #endregion Constructors
+
+        private void ApplyLocalizedChrome()
+        {
+            this.grpOutline.Text = PropertyDialogsLocalization.StyleMouseSpeedGeneralGroup;
+            this.lblOutlineWidth.Text = PropertyDialogsLocalization.StyleOutlineWidthLabel;
+            this.clrInner.LabelText = PropertyDialogsLocalization.StyleMouseSpeedColor1Low;
+            this.clrOuter.LabelText = PropertyDialogsLocalization.StyleMouseSpeedColor2High;
+        }
 
         #region Properties
 
@@ -113,5 +123,10 @@ namespace ThoNohT.NohBoard.Controls
         }
 
         #endregion Methods
+
+        private void grpOutline_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }

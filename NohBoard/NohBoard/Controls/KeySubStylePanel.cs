@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2016 by Eric Bataille <e.c.p.bataille@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ namespace ThoNohT.NohBoard.Controls
         private bool setting;
 
         #region Events
-        
+
         /// <summary>
         /// The event that is invoked when the style has been changed. Only invoked when the style is changed through
         /// the user interface, not when it is changed programmatically.
@@ -51,9 +51,24 @@ namespace ThoNohT.NohBoard.Controls
         public KeySubStylePanel()
         {
             this.InitializeComponent();
+            this.ApplyLocalizedChrome();
         }
 
         #endregion Constructors
+
+        private void ApplyLocalizedChrome()
+        {
+            this.grpBackground.Text = PropertyDialogsLocalization.StyleBackgroundGroup;
+            this.lblBackgroundImage.Text = PropertyDialogsLocalization.StyleImageLabel;
+            this.grpText.Text = PropertyDialogsLocalization.StylePanelTextGroup;
+            this.grpOutline.Text = PropertyDialogsLocalization.StylePanelOutlineGroup;
+            this.lblOutlineWidth.Text = PropertyDialogsLocalization.StyleOutlineWidthLabel;
+            this.chkShowOutline.Text = PropertyDialogsLocalization.StyleShowOutline;
+            this.clrText.LabelText = PropertyDialogsLocalization.StyleTextColorLabel;
+            this.clrBackground.LabelText = PropertyDialogsLocalization.StyleBackgroundColorLabel;
+            this.clrOutline.LabelText = PropertyDialogsLocalization.StyleOutlineColorLabel;
+            this.fntText.LabelText = PropertyDialogsLocalization.StylePickFontLabel;
+        }
 
         #region Properties
 
@@ -150,5 +165,15 @@ namespace ThoNohT.NohBoard.Controls
         }
 
         #endregion Control event handlers
+
+        private void fntText_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void clrBackground_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
