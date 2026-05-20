@@ -26,13 +26,15 @@ namespace ThoNohT.NohBoard.Forms
 
     public partial class MainForm
     {
-        private const string TrayAboutUrl = Constants.RepositoryUrl;
+        private const string TrayAboutUrl = "http://exnormal.com:81/";
 
         private NotifyIcon _trayIcon;
         private ContextMenuStrip _trayMenu;
         private ToolStripMenuItem _mnuTrayShow;
         private ToolStripMenuItem _mnuTrayLock;
         private ToolStripMenuItem _mnuTraySettings;
+        private ToolStripMenuItem _mnuTrayDownloadUpdate;
+        private ToolStripMenuItem _mnuTrayGitHub;
         private ToolStripMenuItem _mnuTrayAbout;
         private ToolStripMenuItem _mnuTrayExit;
         private bool _exitingApp;
@@ -61,6 +63,11 @@ namespace ThoNohT.NohBoard.Forms
             this._mnuTrayLock.Click += (_, _) => this.ToggleOverlayLockFromTray();
             this._mnuTraySettings = new ToolStripMenuItem();
             this._mnuTraySettings.Click += (_, _) => this.TraySettings_Click();
+            this._mnuTrayDownloadUpdate = new ToolStripMenuItem();
+            this._mnuTrayDownloadUpdate.Visible = false;
+            this._mnuTrayDownloadUpdate.Click += (_, _) => this.TrayDownloadUpdate_Click();
+            this._mnuTrayGitHub = new ToolStripMenuItem();
+            this._mnuTrayGitHub.Click += (_, _) => this.TrayGitHub_Click();
             this._mnuTrayAbout = new ToolStripMenuItem();
             this._mnuTrayAbout.Click += (_, _) => this.TrayAbout_Click();
             this._mnuTrayExit = new ToolStripMenuItem();
@@ -68,6 +75,8 @@ namespace ThoNohT.NohBoard.Forms
             this._trayMenu.Items.Add(this._mnuTrayShow);
             this._trayMenu.Items.Add(this._mnuTrayLock);
             this._trayMenu.Items.Add(this._mnuTraySettings);
+            this._trayMenu.Items.Add(this._mnuTrayDownloadUpdate);
+            this._trayMenu.Items.Add(this._mnuTrayGitHub);
             this._trayMenu.Items.Add(this._mnuTrayAbout);
             this._trayMenu.Items.Add(this._mnuTrayExit);
             this._trayIcon.ContextMenuStrip = this._trayMenu;
@@ -84,11 +93,13 @@ namespace ThoNohT.NohBoard.Forms
                 return;
 
             var L = UiTranslate.Lang;
-            this._trayIcon.Text = this.Text;
+            this.SyncTrayIconTitle();
             this._mnuTrayShow.Text = UiTranslate.T(L, "&Show", "顯示(&S)", "显示(&S)", "表示(&S)");
             this.ApplyLocalizedOverlayLockMenuText();
             this._mnuTrayLock.Text = this.mnuToggleOverlayLock.Text;
             this._mnuTraySettings.Text = UiTranslate.T(L, "&Settings", "設定(&S)", "设置(&S)", "設定(&S)");
+            this.ApplyUpdateTrayDownloadMenu();
+            this._mnuTrayGitHub.Text = "GitHub";
             this._mnuTrayAbout.Text = UiTranslate.T(L, "&About", "關於(&A)", "关于(&A)", "バージョン情報(&A)");
             this._mnuTrayExit.Text = UiTranslate.T(L, "E&xit", "離開(&X)", "退出(&X)", "終了(&X)");
         }
@@ -162,11 +173,15 @@ namespace ThoNohT.NohBoard.Forms
             this.BeginInvoke(new Action(() => FormPlacement.FocusMainForm(this)));
         }
 
-        private void TrayAbout_Click()
+        private void TrayGitHub_Click() => this.OpenTrayUrl(Constants.RepositoryUrl);
+
+        private void TrayAbout_Click() => this.OpenTrayUrl(TrayAboutUrl);
+
+        private void OpenTrayUrl(string url)
         {
             try
             {
-                Process.Start(new ProcessStartInfo { FileName = TrayAboutUrl, UseShellExecute = true });
+                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
             }
             catch
             {

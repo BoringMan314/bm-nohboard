@@ -49,6 +49,18 @@ namespace ThoNohT.NohBoard.Forms
 
         private VersionInfo latestVersion = null;
 
+        private string _latestReleaseZipUrl;
+
+        private bool _updateCheckStarted;
+
+        private bool _updateZipDownloadInProgress;
+
+        private string _baseWindowTitle = Version.DefaultTitle;
+
+        private bool _showingUpdateTitle;
+
+        private readonly Timer _updateTitleTimer;
+
         #endregion Fields
 
         #region Constructors
@@ -56,6 +68,8 @@ namespace ThoNohT.NohBoard.Forms
         public MainForm()
         {
             this.InitializeComponent();
+            this._updateTitleTimer = new Timer(this.components) { Interval = 3000 };
+            this._updateTitleTimer.Tick += this.UpdateTitleTimer_Tick;
             this.ApplyExecutableIconAsWindowIcon();
             this.HandleCreated += (_, _) => this.ApplyTaskSwitcherIconicPreviewPreference();
             this.SetStyle(ControlStyles.ResizeRedraw, true);
@@ -95,6 +109,10 @@ namespace ThoNohT.NohBoard.Forms
 
         private void StartLatestVersionCheck()
         {
+            if (this._updateCheckStarted)
+                return;
+
+            this._updateCheckStarted = true;
             _ = this.CheckLatestVersionAsync();
         }
 
@@ -127,12 +145,17 @@ namespace ThoNohT.NohBoard.Forms
                         if (!isNewer)
                             return;
 
+                        var zipUrl = TryGetReleaseZipAssetUrl(doc.RootElement);
+
                         void applyOnUi()
                         {
                             if (this.IsDisposed)
                                 return;
                             this.latestVersion = versionInfo;
-                            this.ApplyLocalizedMainMenu();
+                            this._latestReleaseZipUrl = zipUrl;
+                            this.RefreshBaseWindowTitle();
+                            this.StartUpdateTitleAlternation();
+                            this.ApplyUpdateTrayDownloadMenu();
                         }
 
                         if (this.IsDisposed)
@@ -148,6 +171,29 @@ namespace ThoNohT.NohBoard.Forms
             catch
             {
             }
+        }
+
+        private static string TryGetReleaseZipAssetUrl(JsonElement releaseRoot)
+        {
+            if (!releaseRoot.TryGetProperty("assets", out var assets))
+                return null;
+
+            foreach (var asset in assets.EnumerateArray())
+            {
+                if (!asset.TryGetProperty("name", out var nameProp))
+                    continue;
+
+                var name = nameProp.GetString();
+                if (string.IsNullOrEmpty(name)
+                    || name.IndexOf("bm-nohboard_windows_x64", StringComparison.OrdinalIgnoreCase) < 0
+                    || !name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (asset.TryGetProperty("browser_download_url", out var urlProp))
+                    return urlProp.GetString();
+            }
+
+            return null;
         }
 
         private static bool TryParseReleaseTag(string tag, out VersionInfo versionInfo)
@@ -168,6 +214,159 @@ namespace ThoNohT.NohBoard.Forms
 
             versionInfo = new VersionInfo { Major = major, Minor = minor, Patch = patch };
             return true;
+        }
+
+        private void RefreshBaseWindowTitle()
+        {
+            var title = GlobalSettings.Settings?.WindowTitle;
+            this._baseWindowTitle = string.IsNullOrWhiteSpace(title) ? Version.DefaultTitle : title;
+        }
+
+        private string FormatUpdateAvailableTitle() =>
+            string.Format(
+                UiTranslate.T(
+                    "New version available: {0}.",
+                    "有新版本：{0}。",
+                    "有可用新版本：{0}。",
+                    "新しいバージョンがあります：{0}。"),
+                this.latestVersion.Format());
+
+        private void ApplyDisplayedWindowTitle()
+        {
+            if (this.latestVersion == null)
+                this.Text = this._baseWindowTitle;
+            else
+                this.Text = this._showingUpdateTitle ? this.FormatUpdateAvailableTitle() : this._baseWindowTitle;
+        }
+
+        private void SyncTrayIconTitle()
+        {
+            if (this._trayIcon != null)
+                this._trayIcon.Text = this._baseWindowTitle;
+        }
+
+        private void StartUpdateTitleAlternation()
+        {
+            if (this.latestVersion == null)
+                return;
+
+            this._showingUpdateTitle = false;
+            this.ApplyDisplayedWindowTitle();
+            this.SyncTrayIconTitle();
+            this._updateTitleTimer.Start();
+        }
+
+        private void UpdateTitleTimer_Tick(object sender, EventArgs e)
+        {
+            if (this.latestVersion == null)
+            {
+                this._updateTitleTimer.Stop();
+                return;
+            }
+
+            this._showingUpdateTitle = !this._showingUpdateTitle;
+            this.ApplyDisplayedWindowTitle();
+        }
+
+        private string GetLatestUpdateZipSavePath()
+        {
+            var dir = Constants.ExePath;
+            if (string.IsNullOrEmpty(dir))
+                dir = AppDomain.CurrentDomain.BaseDirectory;
+
+            return Path.Combine(
+                dir,
+                $"bm-nohboard_windows_x64-V{this.latestVersion.Major}.{this.latestVersion.Minor}.{this.latestVersion.Patch}.zip");
+        }
+
+        private async Task DownloadLatestReleaseZipAsync()
+        {
+            if (this.latestVersion == null || string.IsNullOrEmpty(this._latestReleaseZipUrl))
+                return;
+
+            var path = this.GetLatestUpdateZipSavePath();
+            if (File.Exists(path))
+                return;
+
+            if (this._updateZipDownloadInProgress)
+                return;
+
+            this._updateZipDownloadInProgress = true;
+            this.RunOnUiThread(this.ApplyUpdateTrayDownloadMenu);
+            var tempPath = path + ".download";
+            try
+            {
+                using (var client = new HttpClient { Timeout = TimeSpan.FromMinutes(10) })
+                {
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd(Constants.AppId);
+                    using (var response = await client
+                        .GetAsync(this._latestReleaseZipUrl, HttpCompletionOption.ResponseHeadersRead)
+                        .ConfigureAwait(false))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        await using (var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                        {
+                            await using (var file = File.Create(tempPath))
+                                await stream.CopyToAsync(file).ConfigureAwait(false);
+                        }
+                    }
+                }
+
+                if (File.Exists(path))
+                    File.Delete(path);
+
+                File.Move(tempPath, path);
+            }
+            catch
+            {
+                try
+                {
+                    if (File.Exists(tempPath))
+                        File.Delete(tempPath);
+                }
+                catch
+                {
+                }
+            }
+            finally
+            {
+                this._updateZipDownloadInProgress = false;
+                this.RunOnUiThread(this.ApplyUpdateTrayDownloadMenu);
+            }
+        }
+
+        private void RunOnUiThread(Action action)
+        {
+            if (this.IsDisposed)
+                return;
+
+            if (this.InvokeRequired)
+                this.BeginInvoke(action);
+            else
+                action();
+        }
+
+        internal void ApplyUpdateTrayDownloadMenu()
+        {
+            if (this._mnuTrayDownloadUpdate == null)
+                return;
+
+            var L = UiTranslate.Lang;
+            this._mnuTrayDownloadUpdate.Text = UiTranslate.T(
+                L,
+                "&Download update",
+                "下載更新(&D)",
+                "下载更新(&D)",
+                "更新をダウンロード(&D)");
+            this._mnuTrayDownloadUpdate.Visible = this.latestVersion != null;
+            this._mnuTrayDownloadUpdate.Enabled = this.latestVersion != null
+                && !string.IsNullOrEmpty(this._latestReleaseZipUrl)
+                && !this._updateZipDownloadInProgress;
+        }
+
+        private void TrayDownloadUpdate_Click()
+        {
+            _ = this.DownloadLatestReleaseZipAsync();
         }
 
         #endregion Version check
@@ -452,9 +651,9 @@ namespace ThoNohT.NohBoard.Forms
             }
 
             FormPlacement.MoveMainFormToDefaultPosition(this);
-            var title = GlobalSettings.Settings.WindowTitle;
-
-            this.Text = string.IsNullOrWhiteSpace(title) ? Version.DefaultTitle : title;
+            this.RefreshBaseWindowTitle();
+            this.Text = this._baseWindowTitle;
+            this.SyncTrayIconTitle();
 
             this.StartLatestVersionCheck();
 
@@ -565,10 +764,11 @@ namespace ThoNohT.NohBoard.Forms
             HookManager.ScrollHold = GlobalSettings.Settings.ScrollHold;
             HookManager.PressHold = GlobalSettings.Settings.PressHold;
 
-            var title = GlobalSettings.Settings.WindowTitle;
-            this.Text = string.IsNullOrWhiteSpace(title) ? Version.DefaultTitle : title;
-            if (this._trayIcon != null)
-                this._trayIcon.Text = this.Text;
+            this.RefreshBaseWindowTitle();
+            if (this.latestVersion == null)
+                this._updateTitleTimer.Stop();
+            this.ApplyDisplayedWindowTitle();
+            this.SyncTrayIconTitle();
 
             this.LoadKeyboard();
             this.ApplyLocalizedMainMenu();
@@ -608,6 +808,9 @@ namespace ThoNohT.NohBoard.Forms
 
             this.ApplyLocalizedTrayMenu();
             this.ApplyLocalizedEditModeToggleText();
+
+            if (this.latestVersion != null)
+                this.ApplyDisplayedWindowTitle();
         }
 
         private void ApplyLocalizedOverlayLockMenuText()
@@ -693,22 +896,6 @@ namespace ThoNohT.NohBoard.Forms
             this.mnuSaveToGlobalStyleName.Visible = GlobalSettings.Settings.LoadedGlobalStyle;
 
             this.mnuToggleEditMode.Enabled = GlobalSettings.CurrentDefinition != null;
-
-            if (this.latestVersion != null && !this.mnuUpdate.Visible)
-            {
-                this.mnuUpdate.Text = string.Format(
-                    UiTranslate.T(
-                        "New version available: {0}.",
-                        "有新版本：{0}。",
-                        "有可用新版本：{0}。",
-                        "新しいバージョンがあります：{0}。"),
-                    this.latestVersion.Format());
-                this.mnuUpdate.Visible = true;
-                this.mnuUpdate.Click += (s, ea) =>
-                {
-                    Process.Start(new ProcessStartInfo { FileName = Constants.ReleasesUrl, UseShellExecute = true });
-                };
-            }
 
             this.mnuMoveElement.Visible = this.relevantDefinition != null;
 

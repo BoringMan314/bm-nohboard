@@ -72,7 +72,6 @@ namespace ThoNohT.NohBoard.Forms
             this.mnuSaveStyleAs = new System.Windows.Forms.ToolStripMenuItem();
             this.MainMenuSep3 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuUpdate = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuGenerateLog = new System.Windows.Forms.ToolStripMenuItem();
             this.KeyCheckTimer = new System.Windows.Forms.Timer(this.components);
             this._keyboardSurface = new KeyboardSurfacePanel();
@@ -103,7 +102,6 @@ namespace ThoNohT.NohBoard.Forms
             this.mnuSaveStyle,
             this.MainMenuSep3,
             this.mnuExit,
-            this.mnuUpdate,
             this.mnuGenerateLog});
             this.MainMenu.Name = "MainMenu";
             this.MainMenu.Size = new System.Drawing.Size(205, 425);
@@ -260,10 +258,6 @@ namespace ThoNohT.NohBoard.Forms
             this.mnuExit.Size = new System.Drawing.Size(200, 23);
             this.mnuExit.Text = "E&xit";
             this.mnuExit.Click += new System.EventHandler(this.mnuExit_Click);
-            this.mnuUpdate.Name = "mnuUpdate";
-            this.mnuUpdate.Size = new System.Drawing.Size(200, 23);
-            this.mnuUpdate.Text = "Update available";
-            this.mnuUpdate.Visible = false;
             this.mnuGenerateLog.Name = "mnuGenerateLog";
             this.mnuGenerateLog.Size = new System.Drawing.Size(200, 23);
             this.mnuGenerateLog.Text = "Generate crash log";
@@ -325,7 +319,6 @@ namespace ThoNohT.NohBoard.Forms
         private System.Windows.Forms.ToolStripSeparator MainMenuSep3;
         private System.Windows.Forms.ToolStripMenuItem mnuSaveToGlobalStyleName;
         private System.Windows.Forms.Timer KeyCheckTimer;
-        private System.Windows.Forms.ToolStripMenuItem mnuUpdate;
         private System.Windows.Forms.ToolStripMenuItem mnuMoveElement;
         private System.Windows.Forms.ToolStripMenuItem mnuMoveToTop;
         private System.Windows.Forms.ToolStripMenuItem mnuMoveUp;
