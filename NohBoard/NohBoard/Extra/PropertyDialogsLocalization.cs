@@ -171,7 +171,14 @@ namespace ThoNohT.NohBoard.Extra
             UiTranslate.T("Outline Color", "外框色彩", "轮廓颜色", "枠線の色");
 
         public static string StylePickFontLabel =>
-            UiTranslate.T("Pick a font.", "選擇字型。", "选择字体。", "フォントを選ぶ");
+            UiTranslate.T(
+                "Double-click to pick a font.",
+                "雙擊選擇字型",
+                "双击选择字体",
+                "フォントをダブルクリック");
+
+        public static string StyleFontPreviewSample =>
+            UiTranslate.T("Preview Aa", "預覽 Aa", "预览 Aa", "プレビュー Aa");
 
         public static string StylePickColorFallback =>
             UiTranslate.T("Pick a color.", "選擇色彩。", "选择颜色。", "色を選ぶ。");

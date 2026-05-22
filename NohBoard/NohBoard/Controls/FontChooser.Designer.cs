@@ -17,19 +17,31 @@ namespace ThoNohT.NohBoard.Controls
 
         private void InitializeComponent()
         {
+            lblPrompt = new System.Windows.Forms.Label();
             DisplayLabel = new System.Windows.Forms.Label();
             lblLink = new System.Windows.Forms.Label();
             txtLink = new System.Windows.Forms.TextBox();
             SuspendLayout();
+            lblPrompt.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lblPrompt.AutoEllipsis = false;
+            lblPrompt.BackColor = System.Drawing.SystemColors.Control;
+            lblPrompt.Location = new System.Drawing.Point(5, 0);
+            lblPrompt.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblPrompt.Name = "lblPrompt";
+            lblPrompt.Size = new System.Drawing.Size(180, 18);
+            lblPrompt.TabIndex = 3;
+            lblPrompt.Text = "Pick a font.";
+            lblPrompt.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            lblPrompt.DoubleClick += FontChooser_DoubleClick;
             DisplayLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            DisplayLabel.AutoEllipsis = true;
+            DisplayLabel.AutoEllipsis = false;
             DisplayLabel.BackColor = System.Drawing.SystemColors.Control;
-            DisplayLabel.Location = new System.Drawing.Point(5, 0);
+            DisplayLabel.Location = new System.Drawing.Point(5, 20);
             DisplayLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             DisplayLabel.Name = "DisplayLabel";
-            DisplayLabel.Size = new System.Drawing.Size(180, 50);
+            DisplayLabel.Size = new System.Drawing.Size(180, 30);
             DisplayLabel.TabIndex = 0;
-            DisplayLabel.Text = "Pick a Font";
+            DisplayLabel.Text = "Aa";
             DisplayLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             DisplayLabel.DoubleClick += FontChooser_DoubleClick;
             DisplayLabel.Layout += DisplayLabel_Layout;
@@ -52,6 +64,7 @@ namespace ThoNohT.NohBoard.Controls
             Controls.Add(txtLink);
             Controls.Add(lblLink);
             Controls.Add(DisplayLabel);
+            Controls.Add(lblPrompt);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "FontChooser";
             Size = new System.Drawing.Size(190, 85);
@@ -63,6 +76,7 @@ namespace ThoNohT.NohBoard.Controls
 
         #endregion
 
+        private System.Windows.Forms.Label lblPrompt;
         private System.Windows.Forms.Label DisplayLabel;
         private System.Windows.Forms.Label lblLink;
         private System.Windows.Forms.TextBox txtLink;

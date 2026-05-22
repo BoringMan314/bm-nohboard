@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace ThoNohT.NohBoard.Forms
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Linq;
@@ -40,6 +41,8 @@ namespace ThoNohT.NohBoard.Forms
         private bool _layeredOverlayModalMode;
 
         private Form _activeAppModalDialog;
+
+        private readonly HashSet<Form> _wiredModalDialogs = new HashSet<Form>();
 
         private int _suspendLayeredKeyboardUpdates;
 
@@ -74,7 +77,8 @@ namespace ThoNohT.NohBoard.Forms
 
         private bool ShouldDeferLayeredKeyboardRepaint()
         {
-            return this._suspendLayeredKeyboardUpdates > 0;
+            return this._suspendLayeredKeyboardUpdates > 0
+                || (this._resetBackBrushesTimer?.Enabled ?? false);
         }
 
         private bool ShouldDeferTimerDrivenRepaint()
@@ -125,7 +129,10 @@ namespace ThoNohT.NohBoard.Forms
                     && this._activeAppModalDialog != null
                     && !this._activeAppModalDialog.IsDisposed
                     && this._activeAppModalDialog.IsHandleCreated)
+                {
                     this.PlaceDialogAboveLayeredOverlay(this._activeAppModalDialog);
+                    this.ScheduleEnsureModalDialogFocus(this._activeAppModalDialog);
+                }
             }
             else
             {
@@ -272,11 +279,12 @@ namespace ThoNohT.NohBoard.Forms
             {
                 FormPlacement.AlignModalDialog(this, dialog);
 
+                this.WireModalDialogBehavior(dialog);
+
                 if (this.IsLayeredOverlayActive)
                 {
                     this.BeginLayeredOverlayModalMode();
                     beganLayeredModal = true;
-                    this.WireDialogAboveLayeredOverlay(dialog);
                 }
 
                 this._activeAppModalDialog = dialog;
@@ -286,6 +294,7 @@ namespace ThoNohT.NohBoard.Forms
                 }
                 finally
                 {
+                    this.FlushResetBackBrushes(restoreModalFocus: false);
                     this._activeAppModalDialog = null;
                 }
             }
@@ -328,32 +337,78 @@ namespace ThoNohT.NohBoard.Forms
 
         internal void PrepareDialogAboveLayeredOverlay(Form dialog)
         {
-            if (dialog == null || dialog.IsDisposed || !this.IsLayeredOverlayActive)
+            if (dialog == null || dialog.IsDisposed)
                 return;
 
-            this.WireDialogAboveLayeredOverlay(dialog);
+            this.WireModalDialogBehavior(dialog);
         }
 
-        private void WireDialogAboveLayeredOverlay(Form dialog)
+        private void WireModalDialogBehavior(Form dialog)
         {
-            var stacked = false;
+            if (dialog == null || dialog.IsDisposed || !this._wiredModalDialogs.Add(dialog))
+                return;
+
+            dialog.FormClosed += (_, _) => this._wiredModalDialogs.Remove(dialog);
             dialog.Shown += (_, _) =>
             {
-                if (stacked)
-                    return;
+                dialog.BeginInvoke(
+                    new Action(
+                        () =>
+                        {
+                            if (dialog.IsDisposed)
+                                return;
 
-                stacked = true;
-                this.PlaceDialogAboveLayeredOverlay(dialog);
-                this.FocusModalDialog(dialog);
+                            if (this.IsLayeredOverlayActive)
+                                this.PlaceDialogAboveLayeredOverlay(dialog);
+
+                            this.EnsureModalDialogFocus(dialog);
+                        }));
             };
         }
 
-        private void FocusModalDialog(Form dialog)
+        private void ScheduleEnsureModalDialogFocus(Form dialog)
         {
             if (dialog == null || dialog.IsDisposed)
                 return;
 
+            if (!this.IsHandleCreated)
+            {
+                this.EnsureModalDialogFocus(dialog);
+                return;
+            }
+
+            this.BeginInvoke(new Action(() => this.EnsureModalDialogFocus(dialog)));
+        }
+
+        private void EnsureModalDialogFocus(Form dialog)
+        {
+            if (dialog == null || dialog.IsDisposed || !dialog.Visible)
+                return;
+
+            if (this.DialogHasTextInputFocus(dialog))
+                return;
+
             FormPlacement.FocusMainForm(dialog);
+
+            if (dialog.ContainsFocus)
+                return;
+
+            if (dialog.CancelButton is Control cancel && cancel.CanSelect)
+                dialog.ActiveControl = cancel;
+            else
+                dialog.SelectNextControl(null, true, true, true, false);
+        }
+
+        private bool DialogHasTextInputFocus(Form dialog)
+        {
+            var focused = dialog.ActiveControl;
+            if (focused == null)
+                return false;
+
+            while (focused is ContainerControl container && container.ActiveControl != null)
+                focused = container.ActiveControl;
+
+            return focused is TextBoxBase;
         }
 
         internal void PlaceDialogAboveLayeredOverlay(Form dialog)
@@ -650,10 +705,20 @@ namespace ThoNohT.NohBoard.Forms
             this.SyncLayeredOverlayBounds();
 
             var screenOrigin = this._layeredOverlay.PointToScreen(Point.Empty);
-            return LayeredWindowHelper.TryUpdateLayeredWindow(
+            var presented = LayeredWindowHelper.TryUpdateLayeredWindow(
                 this._layeredOverlay.Handle,
                 this._layeredBitmap,
                 screenOrigin);
+
+            if (presented
+                && this._layeredOverlayModalMode
+                && this._activeAppModalDialog != null
+                && !this._activeAppModalDialog.IsDisposed)
+            {
+                this.ScheduleEnsureModalDialogFocus(this._activeAppModalDialog);
+            }
+
+            return presented;
         }
 
         private void BringLayeredOverlayToFront()

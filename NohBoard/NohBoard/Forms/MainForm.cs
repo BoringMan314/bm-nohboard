@@ -61,6 +61,12 @@ namespace ThoNohT.NohBoard.Forms
 
         private readonly Timer _updateTitleTimer;
 
+        private readonly Timer _resetBackBrushesTimer;
+
+        private bool _resetBackBrushesPending;
+
+        private ModalInputFocusState _resetBackBrushesFocusState;
+
         #endregion Fields
 
         #region Constructors
@@ -70,6 +76,8 @@ namespace ThoNohT.NohBoard.Forms
             this.InitializeComponent();
             this._updateTitleTimer = new Timer(this.components) { Interval = 3000 };
             this._updateTitleTimer.Tick += this.UpdateTitleTimer_Tick;
+            this._resetBackBrushesTimer = new Timer(this.components) { Interval = 120 };
+            this._resetBackBrushesTimer.Tick += (_, _) => this.FlushResetBackBrushes();
             this.ApplyExecutableIconAsWindowIcon();
             this.HandleCreated += (_, _) => this.ApplyTaskSwitcherIconicPreviewPreference();
             this.SetStyle(ControlStyles.ResizeRedraw, true);
@@ -337,7 +345,7 @@ namespace ThoNohT.NohBoard.Forms
 
         private void RunOnUiThread(Action action)
         {
-            if (this.IsDisposed)
+            if (this.IsDisposed || !this.IsHandleCreated)
                 return;
 
             if (this.InvokeRequired)
@@ -472,6 +480,47 @@ namespace ThoNohT.NohBoard.Forms
 
         private void ResetBackBrushes()
         {
+            if (HookManager.IsModalUiActive
+                && this._activeAppModalDialog != null
+                && this._activeAppModalDialog.IsHandleCreated
+                && !this._activeAppModalDialog.IsDisposed)
+            {
+                var captured = this.CaptureModalInputFocusState();
+                if (captured != null)
+                    this._resetBackBrushesFocusState = captured;
+
+                this._resetBackBrushesPending = true;
+                this._resetBackBrushesTimer.Stop();
+                this._resetBackBrushesTimer.Start();
+                return;
+            }
+
+            this.ResetBackBrushesNow();
+        }
+
+        internal void FlushResetBackBrushes(bool restoreModalFocus = true)
+        {
+            this._resetBackBrushesTimer.Stop();
+
+            if (!this._resetBackBrushesPending)
+                return;
+
+            this._resetBackBrushesPending = false;
+            this.ResetBackBrushesNow();
+
+            if (!restoreModalFocus)
+            {
+                this._resetBackBrushesFocusState = null;
+                return;
+            }
+
+            var focus = this._resetBackBrushesFocusState;
+            this._resetBackBrushesFocusState = null;
+            this.RestoreModalInputFocusState(focus);
+        }
+
+        private void ResetBackBrushesNow()
+        {
             GlobalSettings.StyleDependencyCounter++;
             ImageCache.Clear();
 
@@ -543,6 +592,97 @@ namespace ThoNohT.NohBoard.Forms
             }
 
             this.InvalidateKeyboardSurface(immediate: true);
+        }
+
+        private sealed class ModalInputFocusState
+        {
+            public Control Control { get; set; }
+
+            public int SelectionStart { get; set; }
+
+            public int SelectionLength { get; set; }
+        }
+
+        private ModalInputFocusState CaptureModalInputFocusState()
+        {
+            var dialog = this._activeAppModalDialog;
+            if (dialog == null || dialog.IsDisposed)
+                return null;
+
+            var focused = dialog.ActiveControl;
+            if (focused == null)
+                return null;
+
+            while (focused is ContainerControl container && container.ActiveControl != null)
+                focused = container.ActiveControl;
+
+            if (focused is TextBoxBase textBox)
+            {
+                return new ModalInputFocusState
+                {
+                    Control = textBox,
+                    SelectionStart = textBox.SelectionStart,
+                    SelectionLength = textBox.SelectionLength,
+                };
+            }
+
+            return new ModalInputFocusState { Control = focused };
+        }
+
+        private void RestoreModalInputFocusState(ModalInputFocusState state)
+        {
+            if (state?.Control == null || state.Control.IsDisposed)
+                return;
+
+            var target = state.Control;
+            var form = target.FindForm();
+            if (form == null || form.IsDisposed)
+                return;
+
+            void apply()
+            {
+                if (target.IsDisposed)
+                    return;
+
+                if (!target.IsHandleCreated || !target.CanFocus)
+                    return;
+
+                target.Focus();
+
+                if (target is TextBoxBase textBox)
+                {
+                    var start = Math.Max(0, Math.Min(state.SelectionStart, textBox.Text.Length));
+                    var length = Math.Max(
+                        0,
+                        Math.Min(state.SelectionLength, textBox.Text.Length - start));
+                    textBox.SelectionStart = start;
+                    textBox.SelectionLength = length;
+                }
+            }
+
+            if (!form.IsHandleCreated)
+            {
+                apply();
+                return;
+            }
+
+            if (form.InvokeRequired)
+                form.BeginInvoke(new Action(apply));
+            else
+                apply();
+        }
+
+        internal void PrepareForCrashDialog()
+        {
+            this._resetBackBrushesTimer.Stop();
+            this._resetBackBrushesPending = false;
+            this._resetBackBrushesFocusState = null;
+
+            if (this._layeredOverlay == null || this._layeredOverlay.IsDisposed)
+                return;
+
+            this._layeredOverlay.TopMost = false;
+            this._layeredOverlay.Hide();
         }
 
         private void mnuLoadKeyboard_Click(object sender, EventArgs e)

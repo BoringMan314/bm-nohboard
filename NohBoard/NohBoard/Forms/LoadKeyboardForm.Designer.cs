@@ -120,7 +120,7 @@ namespace ThoNohT.NohBoard.Forms
             StyleList.TabIndex = 5;
             StyleList.SelectedIndexChanged += StyleList_SelectedIndexChanged;
             CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            CloseButton.Location = new Point(295, 295);
+            CloseButton.Location = new Point(295, 305);
             CloseButton.Margin = new System.Windows.Forms.Padding(5);
             CloseButton.Name = "CloseButton";
             CloseButton.Size = new Size(80, 23);
@@ -165,7 +165,7 @@ namespace ThoNohT.NohBoard.Forms
             fontsGrid.Size = new Size(588, 233);
             fontsGrid.TabIndex = 11;
             fontsGrid.CellDoubleClick += fontsGrid_CellDoubleClick;
-            lblRestart.Location = new Point(380, 295);
+            lblRestart.Location = new Point(380, 305);
             lblRestart.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             lblRestart.Name = "lblRestart";
             lblRestart.Size = new Size(600, 23);
@@ -173,7 +173,7 @@ namespace ThoNohT.NohBoard.Forms
             lblRestart.Text = "After a new font has been installed, NohBoard needs to be restarted to recognize it.";
             lblRestart.TextAlign = ContentAlignment.MiddleLeft;
             btnRestart.Enabled = false;
-            btnRestart.Location = new Point(900, 295);
+            btnRestart.Location = new Point(900, 305);
             btnRestart.Margin = new System.Windows.Forms.Padding(5);
             btnRestart.Name = "btnRestart";
             btnRestart.Size = new Size(80, 23);
@@ -184,7 +184,7 @@ namespace ThoNohT.NohBoard.Forms
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CloseButton;
-            ClientSize = new Size(990, 326);
+            ClientSize = new Size(990, 335);
             Controls.Add(btnRestart);
             Controls.Add(lblRestart);
             Controls.Add(fontsGridPanel);

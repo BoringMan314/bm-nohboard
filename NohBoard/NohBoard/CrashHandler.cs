@@ -22,6 +22,7 @@ namespace ThoNohT.NohBoard
     using System.Text;
     using System.Windows.Forms;
     using ThoNohT.NohBoard.Extra;
+    using ThoNohT.NohBoard.Forms;
 
     internal static class CrashHandler
     {
@@ -45,10 +46,73 @@ namespace ThoNohT.NohBoard
 
             File.WriteAllText(logFile.FullName, $"{ShowException(ex)}{CollectState()}");
 
-            MessageBox.Show($"NohBoard crashed. Exception message: {ex.Message}{Environment.NewLine}" +
-                $"A crash log was generated: {logFile.FullName}", "NohBoard has crashed");
             Crashed = true;
-            Application.Exit();
+
+            var message =
+                $"NohBoard crashed. Exception message: {ex.Message}{Environment.NewLine}" +
+                $"A crash log was generated: {logFile.FullName}";
+
+            ShowCrashDialog(message);
+
+            try
+            {
+                Application.Exit();
+            }
+            catch
+            {
+                Environment.Exit(1);
+            }
+        }
+
+        private static void ShowCrashDialog(string message)
+        {
+            var main = AppModalUi.TryGetMainForm();
+
+            void show(IWin32Window owner)
+            {
+                MessageBox.Show(
+                    owner,
+                    message,
+                    "NohBoard has crashed",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+
+            if (main == null || main.IsDisposed)
+            {
+                MessageBox.Show(message, "NohBoard has crashed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                if (main.IsHandleCreated)
+                {
+                    if (main.InvokeRequired)
+                    {
+                        main.Invoke(
+                            new Action(
+                                () =>
+                                {
+                                    main.PrepareForCrashDialog();
+                                    show(main);
+                                }));
+                    }
+                    else
+                    {
+                        main.PrepareForCrashDialog();
+                        show(main);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(message, "NohBoard has crashed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch
+            {
+                MessageBox.Show(message, "NohBoard has crashed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private static string CollectState()

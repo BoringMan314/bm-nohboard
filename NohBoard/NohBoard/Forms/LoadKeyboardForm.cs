@@ -44,6 +44,10 @@ namespace ThoNohT.NohBoard.Forms
 
         private bool fontsGridApplyingColumnWidths;
 
+        private const int LoadKeyboardClientHeight = 335;
+
+        private const int BottomRowY = 305;
+
         private List<StyleInfo> globalStyles;
 
         private class StyleInfo
@@ -79,6 +83,7 @@ namespace ThoNohT.NohBoard.Forms
         {
             this.InitializeComponent();
             this.fontsGrid.Resize += this.fontsGrid_ColumnWidthsResize;
+            this.ApplyBottomRowLayout();
         }
 
         #endregion Constructors
@@ -87,7 +92,7 @@ namespace ThoNohT.NohBoard.Forms
         {
             if (!missingFonts.Any())
             {
-                this.ClientSize = new System.Drawing.Size(385, 336);
+                this.ClientSize = new System.Drawing.Size(385, LoadKeyboardClientHeight);
                 this.fontsGrid.Enabled = false;
                 this.btnRestart.Enabled = false;
                 this.lblMissingFonts.Visible = false;
@@ -97,7 +102,7 @@ namespace ThoNohT.NohBoard.Forms
             }
             else
             {
-                this.ClientSize = new System.Drawing.Size(990, 336);
+                this.ClientSize = new System.Drawing.Size(990, LoadKeyboardClientHeight);
                 this.fontsGrid.Enabled = true;
                 this.btnRestart.Enabled = true;
                 this.lblMissingFonts.Visible = true;
@@ -120,6 +125,15 @@ namespace ThoNohT.NohBoard.Forms
                 this.fontsGrid.Update();
 
             }
+
+            this.ApplyBottomRowLayout();
+        }
+
+        private void ApplyBottomRowLayout()
+        {
+            this.CloseButton.Location = new System.Drawing.Point(this.CloseButton.Location.X, BottomRowY);
+            this.lblRestart.Location = new System.Drawing.Point(this.lblRestart.Location.X, BottomRowY);
+            this.btnRestart.Location = new System.Drawing.Point(this.btnRestart.Location.X, BottomRowY);
         }
 
         private void ApplyFontsGridColumnWidthsAfterBind()
