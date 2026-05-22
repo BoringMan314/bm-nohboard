@@ -21,15 +21,8 @@ namespace ThoNohT.NohBoard.Forms.Style
 
     partial class MouseSpeedStyleForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (this.components != null))
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms.Style
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             Keyboard.Styles.MouseSpeedIndicatorStyle mouseSpeedIndicatorStyle3 = new Keyboard.Styles.MouseSpeedIndicatorStyle();
@@ -55,9 +44,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             defaultMouseSpeed = new MouseSpeedStylePanel();
             chkOverwrite = new System.Windows.Forms.CheckBox();
             SuspendLayout();
-            // 
-            // AcceptButton2
-            // 
             AcceptButton2.Location = new System.Drawing.Point(128, 190);
             AcceptButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             AcceptButton2.Name = "AcceptButton2";
@@ -66,9 +52,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             AcceptButton2.Text = "Accept";
             AcceptButton2.UseVisualStyleBackColor = true;
             AcceptButton2.Click += AcceptButton2_Click;
-            // 
-            // CancelButton2
-            // 
             CancelButton2.Location = new System.Drawing.Point(40, 190);
             CancelButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CancelButton2.Name = "CancelButton2";
@@ -77,9 +60,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
             CancelButton2.Click += CancelButton2_Click;
-            // 
-            // defaultMouseSpeed
-            // 
             serializableColor5.Blue = 0;
             serializableColor5.Green = 0;
             serializableColor5.Red = 0;
@@ -96,9 +76,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             defaultMouseSpeed.Size = new System.Drawing.Size(200, 145);
             defaultMouseSpeed.TabIndex = 16;
             defaultMouseSpeed.Title = "Mouse Speed";
-            // 
-            // chkOverwrite
-            // 
             chkOverwrite.Location = new System.Drawing.Point(10, 160);
             chkOverwrite.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkOverwrite.Name = "chkOverwrite";
@@ -107,9 +84,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             chkOverwrite.Text = "Overwrite default style";
             chkOverwrite.UseVisualStyleBackColor = true;
             chkOverwrite.CheckedChanged += chkOverwrite_CheckedChanged;
-            // 
-            // MouseSpeedStyleForm
-            // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CancelButton2;

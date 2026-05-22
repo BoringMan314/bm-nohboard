@@ -4,15 +4,8 @@ namespace ThoNohT.NohBoard.Controls
 
     partial class KeySubStylePanel
     {
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (this.components != null))
@@ -24,10 +17,6 @@ namespace ThoNohT.NohBoard.Controls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             grpBackground = new System.Windows.Forms.GroupBox();
@@ -48,9 +37,6 @@ namespace ThoNohT.NohBoard.Controls
             grpOutline.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)udOutlineWidth).BeginInit();
             SuspendLayout();
-            // 
-            // grpBackground
-            // 
             grpBackground.Controls.Add(txtBackgoundImage);
             grpBackground.Controls.Add(lblBackgroundImage);
             grpBackground.Controls.Add(clrBackground);
@@ -62,18 +48,12 @@ namespace ThoNohT.NohBoard.Controls
             grpBackground.TabIndex = 1;
             grpBackground.TabStop = false;
             grpBackground.Text = "Background";
-            // 
-            // txtBackgoundImage
-            // 
             txtBackgoundImage.Location = new Point(70, 50);
             txtBackgoundImage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtBackgoundImage.Name = "txtBackgoundImage";
             txtBackgoundImage.Size = new Size(125, 23);
             txtBackgoundImage.TabIndex = 2;
             txtBackgoundImage.TextChanged += txtBackgoundImage_TextChanged;
-            // 
-            // lblBackgroundImage
-            // 
             lblBackgroundImage.Location = new Point(5, 50);
             lblBackgroundImage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblBackgroundImage.Name = "lblBackgroundImage";
@@ -81,9 +61,6 @@ namespace ThoNohT.NohBoard.Controls
             lblBackgroundImage.TabIndex = 1;
             lblBackgroundImage.Text = "Image:";
             lblBackgroundImage.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // clrBackground
-            // 
             clrBackground.BackColor = SystemColors.Control;
             clrBackground.Color = Color.Black;
             clrBackground.LabelText = "Background Color";
@@ -95,9 +72,6 @@ namespace ThoNohT.NohBoard.Controls
             clrBackground.TabIndex = 0;
             clrBackground.ColorChanged += clr_ColorChanged;
             clrBackground.Load += clrBackground_Load;
-            // 
-            // grpText
-            // 
             grpText.Controls.Add(fntText);
             grpText.Controls.Add(clrText);
             grpText.Location = new Point(0, 125);
@@ -108,9 +82,6 @@ namespace ThoNohT.NohBoard.Controls
             grpText.TabIndex = 2;
             grpText.TabStop = false;
             grpText.Text = "Text";
-            // 
-            // fntText
-            // 
             fntText.BackColor = SystemColors.Control;
             fntText.LabelText = "Pick a font.";
             fntText.Link = null;
@@ -121,9 +92,6 @@ namespace ThoNohT.NohBoard.Controls
             fntText.TabIndex = 1;
             fntText.FontChanged += fntText_FontChanged;
             fntText.Load += fntText_Load;
-            // 
-            // clrText
-            // 
             clrText.BackColor = SystemColors.Control;
             clrText.Color = Color.Black;
             clrText.LabelText = "Text Color";
@@ -134,9 +102,6 @@ namespace ThoNohT.NohBoard.Controls
             clrText.Size = new Size(185, 23);
             clrText.TabIndex = 0;
             clrText.ColorChanged += clr_ColorChanged;
-            // 
-            // grpOutline
-            // 
             grpOutline.Controls.Add(lblOutlineWidth);
             grpOutline.Controls.Add(udOutlineWidth);
             grpOutline.Controls.Add(chkShowOutline);
@@ -149,9 +114,6 @@ namespace ThoNohT.NohBoard.Controls
             grpOutline.TabIndex = 3;
             grpOutline.TabStop = false;
             grpOutline.Text = "Outline";
-            // 
-            // lblOutlineWidth
-            // 
             lblOutlineWidth.Location = new Point(70, 80);
             lblOutlineWidth.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblOutlineWidth.Name = "lblOutlineWidth";
@@ -159,9 +121,6 @@ namespace ThoNohT.NohBoard.Controls
             lblOutlineWidth.TabIndex = 3;
             lblOutlineWidth.Text = "Outline Width";
             lblOutlineWidth.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // udOutlineWidth
-            // 
             udOutlineWidth.Location = new Point(5, 80);
             udOutlineWidth.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             udOutlineWidth.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
@@ -170,9 +129,6 @@ namespace ThoNohT.NohBoard.Controls
             udOutlineWidth.TabIndex = 2;
             udOutlineWidth.Value = new decimal(new int[] { 1, 0, 0, 0 });
             udOutlineWidth.ValueChanged += udOutlineWidth_ValueChanged;
-            // 
-            // chkShowOutline
-            // 
             chkShowOutline.Location = new Point(10, 50);
             chkShowOutline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkShowOutline.Name = "chkShowOutline";
@@ -181,9 +137,6 @@ namespace ThoNohT.NohBoard.Controls
             chkShowOutline.Text = "Show Outline";
             chkShowOutline.UseVisualStyleBackColor = true;
             chkShowOutline.CheckedChanged += chkShowOutline_CheckedChanged;
-            // 
-            // clrOutline
-            // 
             clrOutline.BackColor = SystemColors.Control;
             clrOutline.Color = Color.Black;
             clrOutline.LabelText = "Outline Color";
@@ -194,9 +147,6 @@ namespace ThoNohT.NohBoard.Controls
             clrOutline.Size = new Size(185, 23);
             clrOutline.TabIndex = 0;
             clrOutline.ColorChanged += clr_ColorChanged;
-            // 
-            // lblTitle
-            // 
             lblTitle.AutoEllipsis = true;
             lblTitle.Font = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTitle.Location = new Point(0, 0);
@@ -206,9 +156,6 @@ namespace ThoNohT.NohBoard.Controls
             lblTitle.TabIndex = 0;
             lblTitle.Text = "SubStyle";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // KeySubStylePanel
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             Controls.Add(lblTitle);

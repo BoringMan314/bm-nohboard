@@ -21,15 +21,8 @@ namespace ThoNohT.NohBoard.Forms.Style
 
     partial class KeyboardStyleForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (this.components != null))
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms.Style
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             Keyboard.Styles.KeySubStyle keySubStyle1 = new Keyboard.Styles.KeySubStyle();
@@ -73,9 +62,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             lblOutlineWarning = new System.Windows.Forms.Label();
             KeyboardGroup.SuspendLayout();
             SuspendLayout();
-            // 
-            // KeyboardGroup
-            // 
             KeyboardGroup.Controls.Add(txtBackgoundImage);
             KeyboardGroup.Controls.Add(lblBackgroundImage);
             KeyboardGroup.Controls.Add(clrKeyboardBackground);
@@ -87,17 +73,11 @@ namespace ThoNohT.NohBoard.Forms.Style
             KeyboardGroup.TabIndex = 9;
             KeyboardGroup.TabStop = false;
             KeyboardGroup.Text = "Background";
-            // 
-            // txtBackgoundImage
-            // 
             txtBackgoundImage.Location = new System.Drawing.Point(70, 55);
             txtBackgoundImage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtBackgoundImage.Name = "txtBackgoundImage";
             txtBackgoundImage.Size = new System.Drawing.Size(125, 23);
             txtBackgoundImage.TabIndex = 4;
-            // 
-            // lblBackgroundImage
-            // 
             lblBackgroundImage.Location = new System.Drawing.Point(5, 55);
             lblBackgroundImage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblBackgroundImage.Name = "lblBackgroundImage";
@@ -105,9 +85,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             lblBackgroundImage.TabIndex = 3;
             lblBackgroundImage.Text = "Image:";
             lblBackgroundImage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // clrKeyboardBackground
-            // 
             clrKeyboardBackground.BackColor = System.Drawing.SystemColors.Control;
             clrKeyboardBackground.Color = System.Drawing.Color.FromArgb(0, 0, 100);
             clrKeyboardBackground.LabelText = "Background Color";
@@ -117,9 +94,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             clrKeyboardBackground.PreviewShape = ColorChooser.Shape.Square;
             clrKeyboardBackground.Size = new System.Drawing.Size(185, 23);
             clrKeyboardBackground.TabIndex = 2;
-            // 
-            // AcceptButton2
-            // 
             AcceptButton2.Location = new System.Drawing.Point(550, 410);
             AcceptButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             AcceptButton2.Name = "AcceptButton2";
@@ -128,9 +102,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             AcceptButton2.Text = "Accept";
             AcceptButton2.UseVisualStyleBackColor = true;
             AcceptButton2.Click += AcceptButton2_Click;
-            // 
-            // CancelButton2
-            // 
             CancelButton2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             CancelButton2.Location = new System.Drawing.Point(465, 410);
             CancelButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -140,9 +111,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
             CancelButton2.Click += CancelButton2_Click;
-            // 
-            // pressedKeys
-            // 
             pressedKeys.Location = new System.Drawing.Point(430, 10);
             pressedKeys.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             pressedKeys.Name = "pressedKeys";
@@ -171,9 +139,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             pressedKeys.SubStyle = keySubStyle1;
             pressedKeys.TabIndex = 13;
             pressedKeys.Title = "Pressed Keys";
-            // 
-            // looseKeys
-            // 
             looseKeys.Location = new System.Drawing.Point(220, 10);
             looseKeys.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             looseKeys.Name = "looseKeys";
@@ -202,9 +167,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             looseKeys.SubStyle = keySubStyle2;
             looseKeys.TabIndex = 12;
             looseKeys.Title = "Loose Keys";
-            // 
-            // lblKeyboard
-            // 
             lblKeyboard.AutoEllipsis = true;
             lblKeyboard.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
             lblKeyboard.Location = new System.Drawing.Point(10, 10);
@@ -214,9 +176,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             lblKeyboard.TabIndex = 15;
             lblKeyboard.Text = "Keyboard";
             lblKeyboard.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // defaultMouseSpeed
-            // 
             serializableColor7.Blue = 0;
             serializableColor7.Green = 0;
             serializableColor7.Red = 0;
@@ -233,9 +192,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             defaultMouseSpeed.Size = new System.Drawing.Size(200, 145);
             defaultMouseSpeed.TabIndex = 16;
             defaultMouseSpeed.Title = "MouseSpeedIndicator";
-            // 
-            // lblOutlineWarning
-            // 
             lblOutlineWarning.Location = new System.Drawing.Point(10, 290);
             lblOutlineWarning.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblOutlineWarning.Name = "lblOutlineWarning";
@@ -243,9 +199,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             lblOutlineWarning.TabIndex = 21;
             lblOutlineWarning.Text = "Setting a smaller outline for pressed\r\nthan loose keys will show the loose\r\noutline behind the pressed key.";
             lblOutlineWarning.Visible = false;
-            // 
-            // KeyboardStyleForm
-            // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CancelButton2;

@@ -21,15 +21,8 @@ namespace ThoNohT.NohBoard.Forms.Style
 
     partial class KeyStyleForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (this.components != null))
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms.Style
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             Keyboard.Styles.KeySubStyle keySubStyle3 = new Keyboard.Styles.KeySubStyle();
@@ -65,9 +54,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             loose = new KeySubStylePanel();
             lblOutlineWarning = new System.Windows.Forms.Label();
             SuspendLayout();
-            // 
-            // AcceptButton2
-            // 
             AcceptButton2.Location = new System.Drawing.Point(340, 475);
             AcceptButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             AcceptButton2.Name = "AcceptButton2";
@@ -76,9 +62,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             AcceptButton2.Text = "Accept";
             AcceptButton2.UseVisualStyleBackColor = true;
             AcceptButton2.Click += AcceptButton2_Click;
-            // 
-            // CancelButton2
-            // 
             CancelButton2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             CancelButton2.Location = new System.Drawing.Point(255, 475);
             CancelButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -88,9 +71,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
             CancelButton2.Click += CancelButton2_Click;
-            // 
-            // chkOverwriteLoose
-            // 
             chkOverwriteLoose.Location = new System.Drawing.Point(10, 420);
             chkOverwriteLoose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkOverwriteLoose.Name = "chkOverwriteLoose";
@@ -99,9 +79,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             chkOverwriteLoose.Text = "Overwrite default style";
             chkOverwriteLoose.UseVisualStyleBackColor = true;
             chkOverwriteLoose.CheckedChanged += chkOverwriteLoose_CheckedChanged;
-            // 
-            // chkOverwritePressed
-            // 
             chkOverwritePressed.Location = new System.Drawing.Point(220, 420);
             chkOverwritePressed.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkOverwritePressed.Name = "chkOverwritePressed";
@@ -110,9 +87,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             chkOverwritePressed.Text = "Overwrite default style";
             chkOverwritePressed.UseVisualStyleBackColor = true;
             chkOverwritePressed.CheckedChanged += chkOverwritePressed_CheckedChanged;
-            // 
-            // pressed
-            // 
             pressed.Location = new System.Drawing.Point(220, 10);
             pressed.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             pressed.Name = "pressed";
@@ -141,9 +115,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             pressed.SubStyle = keySubStyle3;
             pressed.TabIndex = 13;
             pressed.Title = "Pressed";
-            // 
-            // loose
-            // 
             loose.Location = new System.Drawing.Point(10, 10);
             loose.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             loose.Name = "loose";
@@ -172,9 +143,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             loose.SubStyle = keySubStyle4;
             loose.TabIndex = 12;
             loose.Title = "Loose";
-            // 
-            // lblOutlineWarning
-            // 
             lblOutlineWarning.Location = new System.Drawing.Point(10, 450);
             lblOutlineWarning.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblOutlineWarning.Name = "lblOutlineWarning";
@@ -182,9 +150,6 @@ namespace ThoNohT.NohBoard.Forms.Style
             lblOutlineWarning.TabIndex = 20;
             lblOutlineWarning.Text = "Setting a smaller outline for pressed\r\nthan loose keys will show the loose\r\noutline behind the pressed key.";
             lblOutlineWarning.Visible = false;
-            // 
-            // KeyStyleForm
-            // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CancelButton2;

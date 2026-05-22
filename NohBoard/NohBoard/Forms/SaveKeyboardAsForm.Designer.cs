@@ -21,15 +21,8 @@ namespace ThoNohT.NohBoard.Forms
 
     partial class SaveKeyboardAsForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -41,10 +34,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             lblCategory = new System.Windows.Forms.Label();
@@ -54,9 +43,6 @@ namespace ThoNohT.NohBoard.Forms
             SaveButton = new System.Windows.Forms.Button();
             CancelButton2 = new System.Windows.Forms.Button();
             SuspendLayout();
-            // 
-            // lblCategory
-            // 
             lblCategory.Location = new Point(10, 10);
             lblCategory.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblCategory.Name = "lblCategory";
@@ -64,9 +50,6 @@ namespace ThoNohT.NohBoard.Forms
             lblCategory.TabIndex = 0;
             lblCategory.Text = "Category:";
             lblCategory.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblName
-            // 
             lblName.Location = new Point(10, 40);
             lblName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblName.Name = "lblName";
@@ -74,9 +57,6 @@ namespace ThoNohT.NohBoard.Forms
             lblName.TabIndex = 1;
             lblName.Text = "Name:";
             lblName.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // CategoryCombo
-            // 
             CategoryCombo.FormattingEnabled = true;
             CategoryCombo.Location = new Point(85, 10);
             CategoryCombo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -84,18 +64,12 @@ namespace ThoNohT.NohBoard.Forms
             CategoryCombo.Size = new Size(180, 23);
             CategoryCombo.TabIndex = 2;
             CategoryCombo.TextChanged += CategoryCombo_TextChanged;
-            // 
-            // DefinitionCombo
-            // 
             DefinitionCombo.FormattingEnabled = true;
             DefinitionCombo.Location = new Point(85, 40);
             DefinitionCombo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             DefinitionCombo.Name = "DefinitionCombo";
             DefinitionCombo.Size = new Size(180, 23);
             DefinitionCombo.TabIndex = 3;
-            // 
-            // SaveButton
-            // 
             SaveButton.Location = new Point(185, 70);
             SaveButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             SaveButton.Name = "SaveButton";
@@ -104,9 +78,6 @@ namespace ThoNohT.NohBoard.Forms
             SaveButton.Text = "Save";
             SaveButton.UseVisualStyleBackColor = true;
             SaveButton.Click += SaveButton_Click;
-            // 
-            // CancelButton2
-            // 
             CancelButton2.Location = new Point(100, 70);
             CancelButton2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             CancelButton2.Name = "CancelButton2";
@@ -114,9 +85,6 @@ namespace ThoNohT.NohBoard.Forms
             CancelButton2.TabIndex = 5;
             CancelButton2.Text = "Cancel";
             CancelButton2.UseVisualStyleBackColor = true;
-            // 
-            // SaveKeyboardAsForm
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = CancelButton2;

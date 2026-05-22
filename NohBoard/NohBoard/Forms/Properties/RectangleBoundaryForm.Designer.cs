@@ -4,15 +4,8 @@ namespace ThoNohT.NohBoard.Forms.Properties
 
     partial class RectangleBoundaryForm
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -24,10 +17,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
             lblPosition = new System.Windows.Forms.Label();
@@ -37,9 +26,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             txtSize = new ThoNohT.NohBoard.Controls.VectorTextBox();
             txtPosition = new ThoNohT.NohBoard.Controls.VectorTextBox();
             SuspendLayout();
-            // 
-            // lblPosition
-            // 
             lblPosition.Location = new Point(10, 10);
             lblPosition.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblPosition.Name = "lblPosition";
@@ -47,9 +33,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblPosition.TabIndex = 0;
             lblPosition.Text = "Position";
             lblPosition.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // lblSize
-            // 
             lblSize.Location = new Point(10, 40);
             lblSize.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblSize.Name = "lblSize";
@@ -57,9 +40,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             lblSize.TabIndex = 1;
             lblSize.Text = "Size";
             lblSize.TextAlign = ContentAlignment.MiddleLeft;
-            // 
-            // btnCancel
-            // 
             btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             btnCancel.Location = new Point(110, 70);
             btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -69,9 +49,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
-            // 
-            // btnApply
-            // 
             btnApply.Location = new Point(195, 70);
             btnApply.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             btnApply.Name = "btnApply";
@@ -80,9 +57,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             btnApply.Text = "Apply";
             btnApply.UseVisualStyleBackColor = true;
             btnApply.Click += btnApply_Click;
-            // 
-            // txtSize
-            // 
             txtSize.Location = new Point(95, 40);
             txtSize.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtSize.MaxVal = int.MaxValue;
@@ -94,9 +68,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             txtSize.Text = "0 ; 0";
             txtSize.X = 0;
             txtSize.Y = 0;
-            // 
-            // txtPosition
-            // 
             txtPosition.Location = new Point(95, 10);
             txtPosition.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             txtPosition.MaxVal = int.MaxValue;
@@ -108,9 +79,6 @@ namespace ThoNohT.NohBoard.Forms.Properties
             txtPosition.Text = "0 ; 0";
             txtPosition.X = 0;
             txtPosition.Y = 0;
-            // 
-            // RectangleBoundaryForm
-            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = btnCancel;
