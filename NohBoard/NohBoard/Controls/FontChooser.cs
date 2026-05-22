@@ -43,9 +43,10 @@ namespace ThoNohT.NohBoard.Controls
         public FontChooser()
         {
             this.InitializeComponent();
-            this.Font = DefaultFont;
-            this.DisplayLabel.Text = PropertyDialogsLocalization.StylePickFontLabel;
+            this.lblPrompt.Text = PropertyDialogsLocalization.StylePickFontLabel;
+            this.lblPrompt.Font = SystemFonts.MessageBoxFont;
             this.lblLink.Text = PropertyDialogsLocalization.StyleFontLinkLabel;
+            this.Font = DefaultFont;
 
             this.LayoutFontPreviewRow();
 
@@ -62,15 +63,15 @@ namespace ThoNohT.NohBoard.Controls
             set
             {
                 this.font = value;
-                this.DisplayLabel.Font = value;
+                this.UpdateFontPreview();
                 this.Refresh();
             }
         }
 
         public string LabelText
         {
-            get { return this.DisplayLabel.Text; }
-            set { this.DisplayLabel.Text = value; }
+            get { return this.lblPrompt.Text; }
+            set { this.lblPrompt.Text = value; }
         }
 
         public string Link
@@ -110,11 +111,27 @@ namespace ThoNohT.NohBoard.Controls
             this.FontChanged?.Invoke(this, this.Font, this.Link);
         }
 
+        private void UpdateFontPreview()
+        {
+            if (this.font == null)
+            {
+                this.DisplayLabel.Font = SystemFonts.MessageBoxFont;
+                this.DisplayLabel.Text = string.Empty;
+                return;
+            }
+
+            this.DisplayLabel.Font = this.font;
+            this.DisplayLabel.Text = PropertyDialogsLocalization.StyleFontPreviewSample;
+        }
+
         private void LayoutFontPreviewRow()
         {
-            const int gutter = 27;
-            this.DisplayLabel.Left = gutter;
-            this.DisplayLabel.Width = Math.Max(0, this.Width - gutter);
+            const int margin = 5;
+            var width = Math.Max(0, this.Width - margin * 2);
+            this.lblPrompt.Left = margin;
+            this.lblPrompt.Width = width;
+            this.DisplayLabel.Left = margin;
+            this.DisplayLabel.Width = width;
         }
 
         private void DisplayLabel_Layout(object sender, LayoutEventArgs e)

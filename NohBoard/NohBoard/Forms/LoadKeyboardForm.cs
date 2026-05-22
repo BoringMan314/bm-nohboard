@@ -28,84 +28,44 @@ namespace ThoNohT.NohBoard.Forms
     using ThoNohT.NohBoard.Keyboard;
     using ThoNohT.NohBoard.Legacy;
 
-    /// <summary>
-    /// The form that is used to load keyboards and styles.
-    /// </summary>
     public partial class LoadKeyboardForm : Form
     {
         #region Fields
 
-        /// <summary>
-        /// The name of the currently selected category.
-        /// </summary>
         private string SelectedCategory => (string)this.CategoryCombo.SelectedItem;
 
-        /// <summary>
-        /// The name of the currently selected definition.
-        /// </summary>
         private string SelectedDefinition => (string)this.DefinitionsList.SelectedItem;
 
-        /// <summary>
-        /// Information about the currently selected style.
-        /// </summary>
         private StyleInfo SelectedStyle => (StyleInfo)this.StyleList.SelectedItem;
 
-        /// <summary>
-        /// A value indicating whether the form has completed loading.
-        /// </summary>
         private bool loaded = false;
 
-        /// <summary>
-        /// While repopulating the style list, skip <see cref="StyleList_SelectedIndexChanged"/> (preview runs from the definition handler).
-        /// </summary>
         private bool styleListProgrammaticChange;
 
-        /// <summary>Avoid re-entrancy when column widths trigger layout.</summary>
         private bool fontsGridApplyingColumnWidths;
 
-        /// <summary>
-        /// The list of global styles, this is constant regardless of the loaded styles for specific keyboards.
-        /// </summary>
+        private const int LoadKeyboardClientHeight = 335;
+
+        private const int BottomRowY = 305;
+
         private List<StyleInfo> globalStyles;
 
-        /// <summary>
-        /// A helper class with information about the currently selected style.
-        /// </summary>
         private class StyleInfo
         {
-            /// <summary>
-            /// Indicates whether the style is global.
-            /// </summary>
             public bool Global { get; set; }
 
-            /// <summary>
-            /// The name of the style.
-            /// </summary>
             public string Name { get; set; }
 
-            /// <summary>
-            /// Returns a string that represents the current object.
-            /// </summary>
-            /// <returns>A string that represents the current object.</returns>
             public override string ToString()
             {
                 return this.Global ? $"global: {this.Name}" : this.Name;
             }
         }
 
-        /// <summary>
-        /// A helper class for filling the missing fonts table.
-        /// </summary>
         private class MissingFont
         {
-            /// <summary>
-            /// The name of the font.
-            /// </summary>
             public string Name { get; set; }
 
-            /// <summary>
-            /// The link to download the font.
-            /// </summary>
             public string Link { get; set; }
         }
 
@@ -113,38 +73,26 @@ namespace ThoNohT.NohBoard.Forms
 
         #region Events
 
-        /// <summary>
-        /// The event that is invoked when the style has been changed. Only invoked when the style is changed through
-        /// the user interface, not when it is changed programmatically.
-        /// </summary>
         public event Action<KeyboardDefinition, KeyboardStyle, bool> DefinitionChanged;
 
         #endregion Events
 
         #region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LoadKeyboardForm" /> class.
-        /// </summary>
         public LoadKeyboardForm()
         {
             this.InitializeComponent();
             this.fontsGrid.Resize += this.fontsGrid_ColumnWidthsResize;
+            this.ApplyBottomRowLayout();
         }
 
         #endregion Constructors
 
-        /// <summary>
-        /// Shows or hides the font download panel depending on wether there are missing fonts in the currently loaded
-        /// style.
-        /// </summary>
-        /// <param name="missingFonts"></param>
         public void ToggleFontsPanel(List<SerializableFont> missingFonts)
         {
             if (!missingFonts.Any())
             {
-                // Hide the panel: client width = middle column right (195+180) + 10 px — same control sizes as designer, no stretching.
-                this.ClientSize = new System.Drawing.Size(385, 336);
+                this.ClientSize = new System.Drawing.Size(385, LoadKeyboardClientHeight);
                 this.fontsGrid.Enabled = false;
                 this.btnRestart.Enabled = false;
                 this.lblMissingFonts.Visible = false;
@@ -154,8 +102,7 @@ namespace ThoNohT.NohBoard.Forms
             }
             else
             {
-                // Client width = fontsGridPanel right (380+600) + 10 margin — do not use Form.Width here or borders inflate the client area.
-                this.ClientSize = new System.Drawing.Size(990, 336);
+                this.ClientSize = new System.Drawing.Size(990, LoadKeyboardClientHeight);
                 this.fontsGrid.Enabled = true;
                 this.btnRestart.Enabled = true;
                 this.lblMissingFonts.Visible = true;
@@ -178,11 +125,17 @@ namespace ThoNohT.NohBoard.Forms
                 this.fontsGrid.Update();
 
             }
+
+            this.ApplyBottomRowLayout();
         }
 
-        /// <summary>
-        /// Name column fixed width; link column uses remaining grid width (unchanged behavior aside from name width).
-        /// </summary>
+        private void ApplyBottomRowLayout()
+        {
+            this.CloseButton.Location = new System.Drawing.Point(this.CloseButton.Location.X, BottomRowY);
+            this.lblRestart.Location = new System.Drawing.Point(this.lblRestart.Location.X, BottomRowY);
+            this.btnRestart.Location = new System.Drawing.Point(this.btnRestart.Location.X, BottomRowY);
+        }
+
         private void ApplyFontsGridColumnWidthsAfterBind()
         {
             if (this.fontsGrid.Columns.Count < 2 || this.fontsGridApplyingColumnWidths)
@@ -224,9 +177,6 @@ namespace ThoNohT.NohBoard.Forms
             this.fontsGrid.Columns[1].HeaderText = UiTranslate.T(L, "Link", "連結", "链接", "リンク");
         }
 
-        /// <summary>
-        /// Loads a legacy keyboard definition. This immediately closes the form and loads it in the main form.
-        /// </summary>
         private void LoadLegacyButton_Click(object sender, System.EventArgs e)
         {
             var L = UiTranslate.Lang;
@@ -234,7 +184,7 @@ namespace ThoNohT.NohBoard.Forms
             {
                 Filter = UiTranslate.T(L, "Legacy Keyboard Files|*.kb", "舊版鍵盤檔|*.kb", "旧版键盘文件|*.kb", "レガシーキーボード|*.kb")
             };
-            var result = HookManager.RunModalUi(() => dialog.ShowDialog());
+            var result = AppModalUi.ShowCommonDialog(dialog, this);
 
             if (result == DialogResult.Cancel) return;
 
@@ -242,14 +192,10 @@ namespace ThoNohT.NohBoard.Forms
             this.Close();
         }
 
-        /// <summary>
-        /// Loads the keyboard form, filling the controls with the found categories, definitions and styles.
-        /// </summary>
         private void LoadKeyboardForm_Load(object sender, System.EventArgs e)
         {
             this.ApplyLocalizedLoadKeyboardTexts();
 
-            // Load the list of global styles
             var globalStylesRoot = FileHelper.FromKbs(Constants.GlobalStylesFolder);
 
             if (!globalStylesRoot.Exists)
@@ -267,7 +213,6 @@ namespace ThoNohT.NohBoard.Forms
 
             var root = FileHelper.FromKbs();
 
-            // If there are no keyboard files, no initialization is required.
             if (!root.Exists) return;
 
             this.CategoryCombo.Items.Clear();
@@ -288,9 +233,6 @@ namespace ThoNohT.NohBoard.Forms
             this.ApplyPreviewSelection();
         }
 
-        /// <summary>
-        /// Handles a selection change in the category combo, re-populates the list of keyboards and styles.
-        /// </summary>
         private void CategoryCombo_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             this.PopulateKeyboards();
@@ -299,24 +241,18 @@ namespace ThoNohT.NohBoard.Forms
                 this.ApplyPreviewSelection();
         }
 
-        /// <summary>
-        /// Closes the form.
-        /// </summary>
         private void CloseButton_Click(object sender, System.EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
         }
 
-        /// <summary>
-        /// Deletes the selected keyboard definition and all of its styles. Re-initializes the form to clear the
-        /// style from the lists.
-        /// </summary>
         private void mnuDeleteDefinition_Click(object sender, System.EventArgs e)
         {
             if (this.SelectedDefinition == null) return;
 
             var L = UiTranslate.Lang;
-            var result = MessageBox.Show(
+            var result = AppModalUi.ShowMessageBox(
+                this,
                 string.Format(
                     UiTranslate.T(
                         L,
@@ -336,10 +272,6 @@ namespace ThoNohT.NohBoard.Forms
             this.LoadKeyboardForm_Load(null, null);
         }
 
-        /// <summary>
-        /// Handles a selection change in the definition list, re-populates the styles list for this definition.
-        /// Loads the definition in the main form.
-        /// </summary>
         private void DefinitionsList_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             try
@@ -353,9 +285,6 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// Handles a selection change in the styles list, loading that style in the main form.
-        /// </summary>
         private void StyleList_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             if (this.styleListProgrammaticChange)
@@ -371,9 +300,6 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// Pushes the current category/definition/style selection to the main form preview.
-        /// </summary>
         private void ApplyPreviewSelection()
         {
             if (!this.loaded || this.SelectedDefinition == null)
@@ -414,14 +340,11 @@ namespace ThoNohT.NohBoard.Forms
                         "キーボード {0} の読み込みに失敗しました：{1}"),
                     itemName,
                     ex.Message),
-                UiTranslate.T(L, "Load keyboard", "載入鍵盤", "加载键盘", "キーボードを読み込む"),
+                UiTranslate.T(L, "Error", "錯誤", "错误", "エラー"),
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
         }
 
-        /// <summary>
-        /// Handles a double click on the link cell. Will open the browser if it contains an URL.
-        /// </summary>
         private void fontsGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -462,17 +385,14 @@ namespace ThoNohT.NohBoard.Forms
                 "選択したスタイルで使われている次のフォントが、この PC にありません。\r\nリンクがある場合は、リンクをダブルクリックしてダウンロードできます：");
             this.lblRestart.Text = UiTranslate.T(
                 L,
-                "After a new font has been installed, NohBoard needs to be restarted to recognize it.",
-                "安裝新字型後，需要重新啟動 NohBoard 才會辨識。",
-                "安装新字体后，需要重新启动 NohBoard 才会识别。",
-                "新しいフォントをインストールした後、NohBoard を再起動すると認識されます。");
+                "After a new font has been installed, bm-nohboard needs to be restarted to recognize it.",
+                "安裝新字型後，需要重新啟動 bm-nohboard 才會辨識。",
+                "安装新字体后，需要重新启动 bm-nohboard 才会识别。",
+                "新しいフォントをインストールした後、bm-nohboard を再起動すると認識されます。");
             this.btnRestart.Text = UiTranslate.T(L, "Restart", "重新啟動", "重新启动", "再起動");
             this.mnuDeleteDefinition.Text = UiTranslate.T(L, "Delete", "刪除", "删除", "削除");
         }
 
-        /// <summary>
-        /// Populates the list of keyboards, for the currently selected category.
-        /// </summary>
         private void PopulateKeyboards()
         {
             var root = FileHelper.FromKbs(this.SelectedCategory);
@@ -485,16 +405,12 @@ namespace ThoNohT.NohBoard.Forms
                     .Select(x => (object)x.Name)
                     .ToArray());
 
-            // If the form is still loading, don't set the selected index.
             if (this.DefinitionsList.Items.Count > 0 && this.loaded)
                 this.DefinitionsList.SelectedIndex = 0;
 
             this.LoadStyles();
         }
 
-        /// <summary>
-        /// Populates the list of styles for the currently selected keyboard definition.
-        /// </summary>
         private void LoadStyles()
         {
             if (this.SelectedDefinition == null)
@@ -540,9 +456,6 @@ namespace ThoNohT.NohBoard.Forms
             }
         }
 
-        /// <summary>
-        /// Returns the index of an item in StyleList that has a given name.
-        /// </summary>
         private int FindStyleListIndex(string styleName)
         {
             for (var i = 0; i < this.StyleList.Items.Count; i++)
@@ -559,9 +472,6 @@ namespace ThoNohT.NohBoard.Forms
 
         #endregion Helpers
 
-        /// <summary>
-        /// Restarts the application.
-        /// </summary>
         private void btnRestart_Click(object sender, EventArgs e)
         {
             Application.Restart();

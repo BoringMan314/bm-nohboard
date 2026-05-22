@@ -580,13 +580,12 @@ namespace ThoNohT.NohBoard.Forms
                 this.elementUnderCursor = null;
                 this.currentlyManipulating = null;
                 if (def.Equals(this.selectedDefinition))
-                {
                     this.selectedDefinition = def;
-                }
 
                 var index = GlobalSettings.CurrentDefinition.Elements.IndexOf(def);
                 GlobalSettings.Settings.UpdateDefinition(
-                    GlobalSettings.CurrentDefinition.RemoveElement(def).AddElement(def, index), false);
+                    GlobalSettings.CurrentDefinition.RemoveElement(def).AddElement(def, index),
+                    false);
 
                 this.ResetBackBrushes();
             }
@@ -724,14 +723,16 @@ namespace ThoNohT.NohBoard.Forms
                         {
                             if (GlobalSettings.CurrentStyle.ElementIsStyled(id))
                             {
-                                GlobalSettings.Settings
-                                    .UpdateStyle(GlobalSettings.CurrentStyle.RemoveElementStyle(id), false);
+                                GlobalSettings.Settings.UpdateStyle(
+                                    GlobalSettings.CurrentStyle.RemoveElementStyle(id),
+                                    false);
                             }
                         }
                         else
                         {
-                            GlobalSettings.Settings
-                                .UpdateStyle(GlobalSettings.CurrentStyle.SetElementStyle(id, style), false);
+                            GlobalSettings.Settings.UpdateStyle(
+                                GlobalSettings.CurrentStyle.SetElementStyle(id, style),
+                                false);
                         }
 
                         this.ResetBackBrushes();
@@ -758,14 +759,16 @@ namespace ThoNohT.NohBoard.Forms
                         {
                             if (GlobalSettings.CurrentStyle.ElementIsStyled(id))
                             {
-                                GlobalSettings.Settings
-                                    .UpdateStyle(GlobalSettings.CurrentStyle.RemoveElementStyle(id), false);
+                                GlobalSettings.Settings.UpdateStyle(
+                                    GlobalSettings.CurrentStyle.RemoveElementStyle(id),
+                                    false);
                             }
                         }
                         else
                         {
-                            GlobalSettings.Settings
-                                .UpdateStyle(GlobalSettings.CurrentStyle.SetElementStyle(id, style), false);
+                            GlobalSettings.Settings.UpdateStyle(
+                                GlobalSettings.CurrentStyle.SetElementStyle(id, style),
+                                false);
                         }
 
                         this.ResetBackBrushes();
